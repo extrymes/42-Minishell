@@ -6,7 +6,7 @@
 /*   By: sabras <sabras@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/24 09:33:57 by sabras            #+#    #+#             */
-/*   Updated: 2024/08/30 23:17:46 by sabras           ###   ########.fr       */
+/*   Updated: 2024/08/31 11:24:40 by sabras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,20 +63,20 @@ struct s_data
 
 // --- Parsing ---
 // input.c
-int		parse_input(t_entry *entry, char **env);
-int		find_cmd(t_entry *entry, char *word, char **env);
-char	*get_word(char *str);
-char	*get_cmd_path(char *word, char **env);
+void	parse_input(t_data *data, t_entry *entry);
+int		find_cmd(t_data *data, char *word);
+char	*get_word(t_data *data, char *str);
+char	*get_cmd_path(t_data *data, char *word);
 
 // input_utils.c
 int		count_spaces(char *str);
 int		count_word_len(char *str);
 
 // prompt.c
-char	*create_prompt(t_data data);
+char	*create_prompt(t_data *data);
 
 // env.c
-int		read_env(t_data *data, char **env);
+void	read_env(t_data *data, char **env);
 char	*ft_getenv(char *key, char **env);
 
 // --- Execution ---
@@ -111,29 +111,29 @@ void	ft_unset(t_cmd *cmd, char **envp);
 
 // --- Utils ---
 // data.c
-int		init_data(t_data *data, char **env);
-void	clear_data(t_data data);
+t_data	init_data(char **env);
+void	clear_data(t_data *data);
 
 // entry.c
 t_entry	init_entry(void);
-void	clear_entry(t_entry entry);
+void	clear_entry(t_entry *entry);
 
 // cmd.c
-t_cmd	*init_cmd(char *name, char *path);
+t_cmd	*init_cmd(char *name, char *path, t_data *data);
 void	add_cmd(t_entry *entry, t_cmd *cmd);
 void	clear_cmd_lst(t_cmd *cmd_lst);
 
 // flag.c
-t_flag	init_flag(void);
+t_flag	*init_flag(char *str, t_data *data);
 void	clear_flag_lst(t_flag *flag_lst);
 
 // realloc.c
-char	*ft_realloc(char *s, size_t size);
+char	*ft_realloc(char *s, size_t size, t_data *data);
 
 // strjoin_free.c
 char	*strjoin_free(char *s1, char *s2, int to_free);
 
 // error.c
-void	print_error(char *error);
+void	throw_error(char *error, t_data *data);
 
 #endif
