@@ -6,13 +6,13 @@
 /*   By: sabras <sabras@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/26 10:54:02 by sabras            #+#    #+#             */
-/*   Updated: 2024/08/30 21:54:15 by sabras           ###   ########.fr       */
+/*   Updated: 2024/08/31 11:29:57 by sabras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	read_env(t_data *data, char **env)
+void	read_env(t_data *data, char **env)
 {
 	int	i;
 
@@ -21,21 +21,16 @@ int	read_env(t_data *data, char **env)
 		i++;
 	data->env = malloc((i + 1) * sizeof(char *));
 	if (!data->env)
-		return (print_error("malloc failure"), 0);
+		throw_error("malloc failure", data);
 	i = 0;
 	while (env[i])
 	{
 		data->env[i] = ft_strdup(env[i]);
 		if (!data->env[i])
-		{
-			while (--i >= 0)
-				free(data->env[i]);
-			return (free(data->env), print_error("malloc failure"), 0);
-		}
+			throw_error("malloc failure", data);
 		i++;
 	}
 	data->env[i] = NULL;
-	return (1);
 }
 
 char	*ft_getenv(char *key, char **env)

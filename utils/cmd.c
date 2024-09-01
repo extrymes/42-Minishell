@@ -6,19 +6,19 @@
 /*   By: sabras <sabras@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/30 16:33:25 by sabras            #+#    #+#             */
-/*   Updated: 2024/08/30 22:53:44 by sabras           ###   ########.fr       */
+/*   Updated: 2024/08/31 11:16:36 by sabras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-t_cmd	*init_cmd(char *name, char *path)
+t_cmd	*init_cmd(char *name, char *path, t_data *data)
 {
 	t_cmd	*cmd;
 
 	cmd = malloc(sizeof(t_cmd));
 	if (!cmd)
-		return (NULL);
+		return (throw_error("malloc failure", data), NULL);
 	cmd->name = name;
 	cmd->path = path;
 	cmd->flag_lst = NULL;

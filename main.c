@@ -6,7 +6,7 @@
 /*   By: sabras <sabras@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/24 09:33:49 by sabras            #+#    #+#             */
-/*   Updated: 2024/08/30 23:13:53 by sabras           ###   ########.fr       */
+/*   Updated: 2024/08/31 11:11:37 by sabras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,19 +18,15 @@ int	main(int ac, char **av, char **env)
 
 	(void)ac;
 	(void)av;
-	if (!init_data(&data, env))
-		return (1);
+	data = init_data(env);
 	while (1)
 	{
-		data.prompt = create_prompt(data);
-		if (!data.prompt)
-			return (1);
+		data.prompt = create_prompt(&data);
 		data.entry.input = readline(data.prompt);
 		add_history(data.entry.input);
-		if (!parse_input(&data.entry, data.env))
-			return (1);
+		parse_input(&data, &data.entry);
 		free(data.prompt);
 		free(data.entry.input);
 	}
-	return (clear_data(data), 0);
+	return (clear_data(&data), 0);
 }

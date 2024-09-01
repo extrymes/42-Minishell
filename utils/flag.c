@@ -6,18 +6,21 @@
 /*   By: sabras <sabras@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/30 22:01:22 by sabras            #+#    #+#             */
-/*   Updated: 2024/08/30 22:02:58 by sabras           ###   ########.fr       */
+/*   Updated: 2024/08/31 11:20:42 by sabras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-t_flag	init_flag(void)
+t_flag	*init_flag(char *str, t_data *data)
 {
-	t_flag	flag;
+	t_flag	*flag;
 
-	flag.str = NULL;
-	flag.next = NULL;
+	flag = malloc(sizeof(t_flag));
+	if (!flag)
+		return (throw_error("malloc failure", data), NULL);
+	flag->str = str;
+	flag->next = NULL;
 	return (flag);
 }
 
