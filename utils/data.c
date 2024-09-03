@@ -6,7 +6,7 @@
 /*   By: sabras <sabras@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/26 09:58:23 by sabras            #+#    #+#             */
-/*   Updated: 2024/08/31 11:13:40 by sabras           ###   ########.fr       */
+/*   Updated: 2024/09/02 14:40:41 by sabras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,5 +39,5 @@ void	clear_data(t_data *data)
 	if (data->prompt)
 		free(data->prompt);
 	clear_entry(&data->entry);
-	clear_history();
+	rl_clear_history();
 }

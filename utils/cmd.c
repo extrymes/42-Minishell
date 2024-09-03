@@ -6,7 +6,7 @@
 /*   By: sabras <sabras@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/30 16:33:25 by sabras            #+#    #+#             */
-/*   Updated: 2024/08/31 11:16:36 by sabras           ###   ########.fr       */
+/*   Updated: 2024/09/03 07:36:31 by sabras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ t_cmd	*init_cmd(char *name, char *path, t_data *data)
 
 	cmd = malloc(sizeof(t_cmd));
 	if (!cmd)
-		return (throw_error("malloc failure", data), NULL);
+		return (free(name), free(path), throw_error("malloc failure", data), NULL);
 	cmd->name = name;
 	cmd->path = path;
 	cmd->flag_lst = NULL;
@@ -42,12 +42,15 @@ void	add_cmd(t_entry *entry, t_cmd *cmd)
 
 void	clear_cmd_lst(t_cmd *cmd_lst)
 {
+	t_cmd	*tmp;
+
 	while (cmd_lst)
 	{
+		tmp = cmd_lst;
 		free(cmd_lst->name);
 		free(cmd_lst->path);
 		clear_flag_lst(cmd_lst->flag_lst);
 		cmd_lst = cmd_lst->next;
+		free(tmp);
 	}
-	free(cmd_lst);
 }

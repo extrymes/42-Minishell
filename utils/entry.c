@@ -6,7 +6,7 @@
 /*   By: sabras <sabras@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/24 13:36:11 by sabras            #+#    #+#             */
-/*   Updated: 2024/08/31 10:53:14 by sabras           ###   ########.fr       */
+/*   Updated: 2024/09/02 16:39:08 by sabras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@ t_entry	init_entry(void)
 
 	entry.cmd_lst = NULL;
 	entry.cmd_count = 0;
+	entry.input = NULL;
 	entry.outfile = 0;
 	entry.infile = 0;
 	return (entry);

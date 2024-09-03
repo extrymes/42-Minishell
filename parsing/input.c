@@ -70,20 +70,21 @@ char	*get_cmd_path(t_data *data, char *word)
 
 	path = ft_getenv("PATH", data->env);
 	if (!path)
-		return (throw_error("path not found", data), NULL);
+		return (free(word), throw_error("path not found", data), NULL);
 	locations = ft_split(path, ':');
 	if (!locations)
-		return (throw_error("malloc failure", data), NULL);
+		return (free(word), throw_error("malloc failure", data), NULL);
 	i = 0;
 	while (locations[i])
 	{
 		joined = strjoin_free(ft_strjoin(locations[i], "/"), word, 0);
 		if (!joined)
-			return (free(locations), throw_error("malloc failure", data), NULL);
+			return (free_split(locations), free(word),
+				throw_error("malloc failure", data), NULL);
 		if (access(joined, F_OK) == 0)
-			return (free(locations), joined);
+			return (free_split(locations), joined);
 		free(joined);
 		i++;
 	}
-	return (free(locations), NULL);
+	return (free_split(locations), NULL);
 }
