@@ -6,7 +6,7 @@
 /*   By: sabras <sabras@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/03 11:05:01 by sabras            #+#    #+#             */
-/*   Updated: 2024/09/04 20:21:43 by sabras           ###   ########.fr       */
+/*   Updated: 2024/09/05 06:01:25 by sabras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,10 +91,10 @@ static char	*parse_content(char *content, char **env)
 	t_parse	parse;
 
 	parse.content = content;
+	parse.size = ft_strlen(content);
 	parse.parsed = malloc((parse.size + 1) * sizeof(char));
 	if (!parse.parsed)
 		return (NULL);
-	parse.size = ft_strlen(content);
 	parse.parsed = replace_variables(&parse, env);
 	if (!parse.parsed)
 		return (NULL);
