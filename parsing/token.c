@@ -6,7 +6,7 @@
 /*   By: sabras <sabras@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/03 11:05:01 by sabras            #+#    #+#             */
-/*   Updated: 2024/09/05 07:40:15 by sabras           ###   ########.fr       */
+/*   Updated: 2024/09/05 08:37:09 by sabras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,10 +92,10 @@ static char	*get_content(char *input)
 static char	*parse_content(t_parse *parse, char *content, char **env)
 {
 	parse->content = content;
-	parse->size = ft_strlen(content);
-	parse->parsed = malloc((parse->size + 1) * sizeof(char));
+	parse->parsed = ft_strdup(content);
 	if (!parse->parsed)
 		return (clear_parse(parse), NULL);
+	parse->size = ft_strlen(content);
 	parse->warning = 0;
 	parse->parsed = replace_variables(parse, env);
 	if (!parse->parsed)
@@ -121,5 +121,6 @@ void	clear_token_lst(t_token *token_lst)
 		free(token_lst->content);
 		token_lst = token_lst->next;
 		free(tmp);
+		tmp = NULL;
 	}
 }

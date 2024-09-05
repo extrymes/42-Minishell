@@ -6,7 +6,7 @@
 /*   By: sabras <sabras@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/24 13:36:11 by sabras            #+#    #+#             */
-/*   Updated: 2024/09/02 16:39:08 by sabras           ###   ########.fr       */
+/*   Updated: 2024/09/05 08:22:00 by sabras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,9 @@ t_entry	init_entry(void)
 void	clear_entry(t_entry *entry)
 {
 	if (entry->input)
+	{
 		free(entry->input);
+		entry->input = NULL;
+	}
 	clear_cmd_lst(entry->cmd_lst);
 }

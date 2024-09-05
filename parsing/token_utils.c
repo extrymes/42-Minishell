@@ -6,7 +6,7 @@
 /*   By: sabras <sabras@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/03 11:20:32 by sabras            #+#    #+#             */
-/*   Updated: 2024/09/05 07:31:44 by sabras           ###   ########.fr       */
+/*   Updated: 2024/09/05 08:47:48 by sabras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,8 @@ char	*replace_variables(t_parse *parse, char **env)
 	int		j;
 
 	if (!ft_strchr(parse->content, '$'))
-		return (free(parse->parsed), ft_strdup(parse->content));
+		return (parse->parsed);
+	quote = 0;
 	i = -1;
 	j = 0;
 	while (parse->content[++i])
@@ -48,7 +49,7 @@ static char	*insert_value(t_parse *parse, char **env, int *i, int *j)
 
 	variable = get_variable(parse->content + *i + 1);
 	if (!variable)
-		return (NULL);
+		return (free(parse->parsed), NULL);
 	value = ft_getenv(variable, env);
 	diff = (ft_strlen(variable) + 1) - ft_strlen(value);
 	if (diff < 0)
@@ -60,7 +61,7 @@ static char	*insert_value(t_parse *parse, char **env, int *i, int *j)
 		ft_strcpy(parse->parsed + *j, value);
 	*i += ft_strlen(variable);
 	*j += ft_strlen(value);
-	return (parse->parsed);
+	return (free(variable), parse->parsed);
 }
 
 static char	*get_variable(char *content)

@@ -6,7 +6,7 @@
 /*   By: sabras <sabras@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/30 22:01:22 by sabras            #+#    #+#             */
-/*   Updated: 2024/09/03 07:37:52 by sabras           ###   ########.fr       */
+/*   Updated: 2024/09/05 08:23:15 by sabras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,5 +34,6 @@ void	clear_flag_lst(t_flag *flag_lst)
 		free(flag_lst->word);
 		flag_lst = flag_lst->next;
 		free(tmp);
+		tmp = NULL;
 	}
 }
