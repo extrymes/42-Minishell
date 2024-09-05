@@ -6,7 +6,7 @@
 /*   By: sabras <sabras@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/03 11:20:32 by sabras            #+#    #+#             */
-/*   Updated: 2024/09/04 20:25:42 by sabras           ###   ########.fr       */
+/*   Updated: 2024/09/05 07:31:44 by sabras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ char	*replace_variables(t_parse *parse, char **env)
 	int		j;
 
 	if (!ft_strchr(parse->content, '$'))
-		return (parse->content);
+		return (free(parse->parsed), ft_strdup(parse->content));
 	i = -1;
 	j = 0;
 	while (parse->content[++i])
@@ -33,11 +33,11 @@ char	*replace_variables(t_parse *parse, char **env)
 		else
 			parse->parsed[j++] = parse->content[i];
 		if (!parse->parsed)
-			return (free(parse->content), NULL);
+			return (NULL);
 		quote = toggle_quote(parse->content[i], quote);
 	}
 	parse->parsed[j] = '\0';
-	return (free(parse->content), parse->parsed);
+	return (parse->parsed);
 }
 
 static char	*insert_value(t_parse *parse, char **env, int *i, int *j)
@@ -106,4 +106,18 @@ char	*remove_quotes(char *content)
 	}
 	parsed[j] = '\0';
 	return (free(content), parsed);
+}
+
+void	clear_parse(t_parse *parse)
+{
+	if (parse->content)
+	{
+		free(parse->content);
+		parse->content = NULL;
+	}
+	if (parse->parsed)
+	{
+		free(parse->parsed);
+		parse->parsed = NULL;
+	}
 }

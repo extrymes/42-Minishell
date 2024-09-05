@@ -6,7 +6,7 @@
 /*   By: sabras <sabras@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/03 11:05:01 by sabras            #+#    #+#             */
-/*   Updated: 2024/09/05 06:01:25 by sabras           ###   ########.fr       */
+/*   Updated: 2024/09/05 07:40:15 by sabras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,11 +14,12 @@
 
 static void	add_token(t_data *data, t_token **token_lst, char *content);
 static char	*get_content(char *input);
-static char	*parse_content(char *content, char **env);
+static char	*parse_content(t_parse *parse, char *content, char **env);
 
 t_token	*tokeniser(t_data *data, char *input)
 {
 	t_token	*token_lst;
+	t_parse	parse;
 	char	*content;
 	int		i;
 
@@ -32,7 +33,9 @@ t_token	*tokeniser(t_data *data, char *input)
 				throw_error("malloc failure", data), NULL);
 		i += ft_strlen(content);
 		i += count_spaces(input + i);
-		content = parse_content(content, data->env);
+		content = parse_content(&parse, content, data->env);
+		if (parse.warning != 0)
+			continue ;
 		if (!content)
 			return (clear_token_lst(token_lst),
 				throw_error("malloc failure", data), NULL);
@@ -86,22 +89,26 @@ static char	*get_content(char *input)
 	return (content);
 }
 
-static char	*parse_content(char *content, char **env)
+static char	*parse_content(t_parse *parse, char *content, char **env)
 {
-	t_parse	parse;
-
-	parse.content = content;
-	parse.size = ft_strlen(content);
-	parse.parsed = malloc((parse.size + 1) * sizeof(char));
-	if (!parse.parsed)
+	parse->content = content;
+	parse->size = ft_strlen(content);
+	parse->parsed = malloc((parse->size + 1) * sizeof(char));
+	if (!parse->parsed)
+		return (clear_parse(parse), NULL);
+	parse->warning = 0;
+	parse->parsed = replace_variables(parse, env);
+	if (!parse->parsed)
+		return (clear_parse(parse), NULL);
+	parse->parsed = remove_quotes(parse->parsed);
+	if (!parse->parsed)
 		return (NULL);
-	parse.parsed = replace_variables(&parse, env);
-	if (!parse.parsed)
-		return (NULL);
-	parse.parsed = remove_quotes(parse.parsed);
-	if (!parse.parsed)
-		return (NULL);
-	return (parse.parsed);
+	if (ft_strchr(content, '$') && ft_strlen(parse->parsed) == 0)
+	{
+		parse->warning = NullContent;
+		return (clear_parse(parse), NULL);
+	}
+	return (free(content), parse->parsed);
 }
 
 void	clear_token_lst(t_token *token_lst)
