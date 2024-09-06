@@ -6,42 +6,13 @@
 /*   By: sabras <sabras@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/03 11:20:32 by sabras            #+#    #+#             */
-/*   Updated: 2024/09/05 08:47:48 by sabras           ###   ########.fr       */
+/*   Updated: 2024/09/06 17:54:23 by sabras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static char	*insert_value(t_parse *parse, char **env, int *i, int *j);
-static char	*get_variable(char *content);
-
-char	*replace_variables(t_parse *parse, char **env)
-{
-	char	quote;
-	int		i;
-	int		j;
-
-	if (!ft_strchr(parse->content, '$'))
-		return (parse->parsed);
-	quote = 0;
-	i = -1;
-	j = 0;
-	while (parse->content[++i])
-	{
-		if (parse->content[i] == '$' && is_valid_key(parse->content[i + 1])
-			&& quote != '\'')
-			parse->parsed = insert_value(parse, env, &i, &j);
-		else
-			parse->parsed[j++] = parse->content[i];
-		if (!parse->parsed)
-			return (NULL);
-		quote = toggle_quote(parse->content[i], quote);
-	}
-	parse->parsed[j] = '\0';
-	return (parse->parsed);
-}
-
-static char	*insert_value(t_parse *parse, char **env, int *i, int *j)
+char	*insert_value(t_parse *parse, char **env, int *i, int *j)
 {
 	char	*variable;
 	char	*value;
@@ -64,7 +35,25 @@ static char	*insert_value(t_parse *parse, char **env, int *i, int *j)
 	return (free(variable), parse->parsed);
 }
 
-static char	*get_variable(char *content)
+char	*insert_home(t_parse *parse, char **env, int *j)
+{
+	char	*home;
+	int		diff;
+
+	home = ft_getenv("HOME", env);
+	diff = 1 - ft_strlen(home);
+	if (diff < 0)
+	{
+		parse->size += -diff;
+		parse->parsed = ft_realloc(parse->parsed, parse->size);
+	}
+	if (home)
+		ft_strcpy(parse->parsed + *j, home);
+	*j += ft_strlen(home);
+	return (parse->parsed);
+}
+
+char	*get_variable(char *content)
 {
 	char	*variable;
 	int		i;
@@ -81,32 +70,6 @@ static char	*get_variable(char *content)
 		variable[j] = content[j];
 	variable[j] = '\0';
 	return (variable);
-}
-
-char	*remove_quotes(char *content)
-{
-	char	*parsed;
-	char	quote;
-	int		i;
-	int		j;
-
-	if (!ft_strchr(content, '\'') && !ft_strchr(content, '\"'))
-		return (content);
-	parsed = malloc((ft_strlen(content) + 1) * sizeof(char));
-	if (!parsed)
-		return (free(content), NULL);
-	quote = 0;
-	i = 0;
-	j = 0;
-	while (content[i])
-	{
-		if (!is_quote(content[i]) || (quote && quote != content[i]))
-			parsed[j++] = content[i];
-		quote = toggle_quote(content[i], quote);
-		i++;
-	}
-	parsed[j] = '\0';
-	return (free(content), parsed);
 }
 
 void	clear_parse(t_parse *parse)

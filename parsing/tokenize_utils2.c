@@ -1,39 +1,45 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   flag.c                                             :+:      :+:    :+:   */
+/*   tokenize_utils2.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: sabras <sabras@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/08/30 22:01:22 by sabras            #+#    #+#             */
-/*   Updated: 2024/09/05 08:23:15 by sabras           ###   ########.fr       */
+/*   Created: 2024/09/04 20:11:00 by sabras            #+#    #+#             */
+/*   Updated: 2024/09/06 19:05:19 by sabras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-t_flag	*init_flag(char *word, t_data *data)
+char	toggle_quote(char c, char quote)
 {
-	t_flag	*flag;
-
-	flag = malloc(sizeof(t_flag));
-	if (!flag)
-		return (free(word), throw_error("malloc failure", data), NULL);
-	flag->word = word;
-	flag->next = NULL;
-	return (flag);
+	if (is_quote(c))
+	{
+		if (!quote)
+			return (c);
+		if (c == quote)
+			return (0);
+	}
+	return (quote);
 }
 
-void	clear_flag_lst(t_flag *flag_lst)
+int	count_spaces(char *str)
 {
-	t_flag	*tmp;
+	int	i;
 
-	while (flag_lst)
-	{
-		tmp = flag_lst;
-		free(flag_lst->word);
-		flag_lst = flag_lst->next;
-		free(tmp);
-		tmp = NULL;
-	}
+	i = 0;
+	while (ft_isspace(str[i]))
+		i++;
+	return (i);
+}
+
+int	count_opt(char *str, char opt)
+{
+	int	i;
+
+	i = 0;
+	while (str[i] == opt)
+		i++;
+	return (i);
 }

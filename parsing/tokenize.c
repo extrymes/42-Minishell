@@ -6,17 +6,18 @@
 /*   By: sabras <sabras@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/03 11:05:01 by sabras            #+#    #+#             */
-/*   Updated: 2024/09/05 08:37:09 by sabras           ###   ########.fr       */
+/*   Updated: 2024/09/06 17:52:14 by sabras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static void	add_token(t_data *data, t_token **token_lst, char *content);
 static char	*get_content(char *input);
 static char	*parse_content(t_parse *parse, char *content, char **env);
+static char	*replace_variables(t_parse *parse, char **env);
+static char	*remove_quotes(char *content);
 
-t_token	*tokeniser(t_data *data, char *input)
+t_token	*tokenize_input(t_data *data, char *input)
 {
 	t_token	*token_lst;
 	t_parse	parse;
@@ -44,28 +45,6 @@ t_token	*tokeniser(t_data *data, char *input)
 	return (token_lst);
 }
 
-static void	add_token(t_data *data, t_token **token_lst, char *content)
-{
-	t_token	*node;
-	t_token	*tmp;
-
-	node = malloc(sizeof(t_token));
-	if (!node)
-		return (clear_token_lst(*token_lst),
-			throw_error("malloc failure", data));
-	node->content = content;
-	node->next = NULL;
-	if (!*token_lst)
-		*token_lst = node;
-	else
-	{
-		tmp = *token_lst;
-		while (tmp->next)
-			tmp = tmp->next;
-		tmp->next = node;
-	}
-}
-
 static char	*get_content(char *input)
 {
 	char	*content;
@@ -78,7 +57,7 @@ static char	*get_content(char *input)
 	while (input[i] && ((!ft_isspace(input[i]) && !is_opt(input[i])) || quote))
 		quote = toggle_quote(input[i++], quote);
 	if (i == 0 && is_opt(input[i]))
-		i = 1;
+		i = count_opt(input, input[i]);
 	content = malloc((i + 1) * sizeof(char));
 	if (!content)
 		return (NULL);
@@ -111,16 +90,57 @@ static char	*parse_content(t_parse *parse, char *content, char **env)
 	return (free(content), parse->parsed);
 }
 
-void	clear_token_lst(t_token *token_lst)
+static char	*replace_variables(t_parse *parse, char **env)
 {
-	t_token	*tmp;
+	char	*content;
+	char	quote;
+	int		i;
+	int		j;
 
-	while (token_lst)
+	content = parse->content;
+	if (!ft_strchr(content, '$') && !ft_strchr(content, '~'))
+		return (parse->parsed);
+	quote = 0;
+	i = -1;
+	j = 0;
+	while (content[++i])
 	{
-		tmp = token_lst;
-		free(token_lst->content);
-		token_lst = token_lst->next;
-		free(tmp);
-		tmp = NULL;
+		if (content[i] == '$' && is_valid_key(content[i + 1]) && quote != '\'')
+			parse->parsed = insert_value(parse, env, &i, &j);
+		else if (content[i] == '~' && is_valid_home(content[i + 1]) && !quote)
+			parse->parsed = insert_home(parse, env, &j);
+		else
+			parse->parsed[j++] = content[i];
+		if (!parse->parsed)
+			return (NULL);
+		quote = toggle_quote(content[i], quote);
 	}
+	parse->parsed[j] = '\0';
+	return (parse->parsed);
+}
+
+static char	*remove_quotes(char *content)
+{
+	char	*parsed;
+	char	quote;
+	int		i;
+	int		j;
+
+	if (!ft_strchr(content, '\'') && !ft_strchr(content, '\"'))
+		return (content);
+	parsed = malloc((ft_strlen(content) + 1) * sizeof(char));
+	if (!parsed)
+		return (free(content), NULL);
+	quote = 0;
+	i = 0;
+	j = 0;
+	while (content[i])
+	{
+		if (!is_quote(content[i]) || (quote && quote != content[i]))
+			parsed[j++] = content[i];
+		quote = toggle_quote(content[i], quote);
+		i++;
+	}
+	parsed[j] = '\0';
+	return (free(content), parsed);
 }
