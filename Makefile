@@ -3,18 +3,22 @@ NAME = minishell
 SRCS = main.c
 
 EXEC_DIR = execution
-EXEC_FILES = pipex.c pipex_utils.c
+EXEC_FILES = pipex.c pipex_utils.c free_exec.c
 EXEC_SRCS = $(addprefix $(EXEC_DIR)/,$(EXEC_FILES))
 
+BUILT_DIR = builtins
+BUILT_FILES = builtins.c pwd.c echo.c cd.c env.c exit.c unset.c export.c export_utils.c
+BUILT_SRCS = $(addprefix $(BUILT_DIR)/,$(BUILT_FILES))
+
 PARS_DIR = parsing
-PARS_FILES = env.c prompt.c input.c input_utils.c
+PARS_FILES = tokenize.c tokenize_utils.c tokenize_utils2.c input.c input_utils.c prompt.c variables.c syntax.c char.c
 PARS_SRCS = $(addprefix $(PARS_DIR)/,$(PARS_FILES))
 
 UTIL_DIR = utils
-UTIL_FILES =  data.c entry.c cmd.c flag.c realloc.c strjoin_free.c error.c
+UTIL_FILES =  data.c entry.c token.c cmd.c arg.c memory.c strjoin_free.c error.c
 UTIL_SRCS = $(addprefix $(UTIL_DIR)/,$(UTIL_FILES))
 
-OBJS = $(SRCS:.c=.o) $(PARS_SRCS:.c=.o) $(UTIL_SRCS:.c=.o)
+OBJS = $(SRCS:.c=.o) $(EXEC_SRCS:.c=.o) $(BUILT_SRCS:.c=.o) $(PARS_SRCS:.c=.o) $(UTIL_SRCS:.c=.o)
 
 HDR_DIR = includes
 
@@ -25,6 +29,7 @@ LIBFT = $(addprefix $(LIBFT_DIR)/,$(LIBFT_FILE))
 CFLAGS = -Wall -Wextra -Werror
 CC = cc $(CFLAGS) -g -I $(HDR_DIR)
 
+BOLD = \033[1m
 GRAY = \033[30m
 RED = \033[31m
 GREEN = \033[32m
