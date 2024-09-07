@@ -1,24 +1,37 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   echo.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: sabras <sabras@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/09/06 15:09:29 by sabras            #+#    #+#             */
+/*   Updated: 2024/09/07 01:15:19 by sabras           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
 void	ft_echo(t_cmd *cmd)
 {
-	int	is_n;
-	int	i;
+	int		is_n;
+	t_arg	*tmp;
 
 	is_n = 0;
-	i = 0;
-	if (cmd->flag_lst->str && cmd->flag_lst->str[0] == '-'
-		&& cmd->flag_lst->str[1] == 'n')
+	tmp = cmd->arg_lst;
+	if (cmd->arg_count == 0)
+		return (ft_putchar_fd('\n', STDOUT_FILENO));
+	if (tmp->data && tmp->data[0] == '-'
+		&& tmp->data[1] == 'n')
 	{
 		is_n = 1;
-		cmd->flag_lst = cmd->flag_lst->next;
+		tmp = tmp->next;
 	}
-	while (cmd->flag_lst)
+	while (tmp)
 	{
-		ft_putstr_fd(cmd->flag_lst->str, STDOUT_FILENO);
-		cmd->flag_lst = cmd->flag_lst->next;
-		if (cmd->flag_lst)
+		ft_putstr_fd(tmp->data, STDOUT_FILENO);
+		tmp = tmp->next;
+		if (tmp)
 			ft_putchar_fd(' ', STDOUT_FILENO);
 	}
 	if (is_n != 1)
