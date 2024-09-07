@@ -6,7 +6,7 @@
 /*   By: sabras <sabras@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/16 18:16:46 by sabras            #+#    #+#             */
-/*   Updated: 2024/09/04 20:21:32 by sabras           ###   ########.fr       */
+/*   Updated: 2024/09/06 08:59:17 by sabras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 # define LIBFT_H
 # include <unistd.h>
 # include <stdlib.h>
+# define BOLD "\x1b[1m"
 # define GRAY "\x1b[30m"
 # define RED "\x1b[31m"
 # define GREEN "\x1b[32m"
