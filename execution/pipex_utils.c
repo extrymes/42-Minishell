@@ -1,64 +1,53 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   pipex_util.c                                       :+:      :+:    :+:   */
+/*   pipex_utils.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: sabras <sabras@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/29 14:37:15 by msimao            #+#    #+#             */
-/*   Updated: 2024/08/30 19:29:21 by sabras           ###   ########.fr       */
+/*   Updated: 2024/09/06 13:33:41 by sabras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-void	ft_close(int fd)
+void	reset_std(t_pipex *pipex)
 {
-	if (fd != 0)
-		close(fd);
+	dup2(pipex->saved_stdout, STDOUT_FILENO);
+	dup2(pipex->saved_stdin, STDIN_FILENO);
+	close(pipex->saved_stdout);
+	close(pipex->saved_stdin);
 }
 
-void	set_file(t_entry *entry, t_pipex *pipex)
+void	set_file(t_pipex *pipex)
 {
-	if (entry->outfile != 0)
-		pipex->outfile = entry->outfile;
-	else
-		pipex->outfile = 0;
-	if (entry->infile != 0)
-	{
-		pipex->infile = entry->infile;
-		dup2(pipex->infile, STDIN_FILENO);
-	}
-	else
-		pipex->infile = 0;
-
+	pipex->saved_stdout = dup(STDOUT_FILENO);
+	pipex->saved_stdin = dup(STDIN_FILENO);
 }
 
-void	one_cmd(t_entry *entry, t_pipex *pipex, char **envp)
+void	one_cmd(t_data *data, t_pipex *pipex)
 {
 	pid_t	pid;
-	char	**cmd;
 
+	(void)pipex;
+	if (data->entry->cmd_lst->path == NULL)
+		return (builtins(data->entry->cmd_lst, data, 0));
 	pid = fork();
 	if (pid < 0)
-	{
-		ft_putstr_fd("pipe error", 2);
-		return ;
-	}
+		return (ft_putstr_fd("pipe error", 2));
 	if (pid == 0)
 	{
-		if (pipex->outfile != 0)
-		{
-			dup2(pipex->outfile, STDOUT_FILENO);
-			close(pipex->outfile);
-		}
-		ft_close(pipex->infile);
-		if (1)
-			builtins(entry->cmd_lst, entry, envp); // strncmp path builtins
-		ft_exec(entry->cmd_lst, envp, entry);
+		// if (pipex->outfile != 0)
+		// {
+		// 	dup2(pipex->outfile, STDOUT_FILENO);
+		// 	close(pipex->outfile);
+		// }
+		// ft_close(pipex->infile);
+		ft_exec(data->entry->cmd_lst, data);
 	}
-	ft_close(pipex->outfile);
-	ft_close(pipex->infile);
+	// ft_close(pipex->outfile);
+	// ft_close(pipex->infile);
 	waitpid(pid, NULL, 0);
 }
 
