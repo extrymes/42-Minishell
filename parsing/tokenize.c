@@ -6,7 +6,7 @@
 /*   By: sabras <sabras@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/03 11:05:01 by sabras            #+#    #+#             */
-/*   Updated: 2024/09/08 04:41:12 by sabras           ###   ########.fr       */
+/*   Updated: 2024/09/08 21:49:27 by sabras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,7 +97,7 @@ static int	count_opt(char *str, char opt)
 	int	i;
 
 	i = 0;
-	while (str[i] == opt)
+	while (str[i] == opt && i < 2)
 		i++;
 	return (i);
 }
