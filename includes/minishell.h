@@ -6,7 +6,7 @@
 /*   By: sabras <sabras@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/24 09:33:57 by sabras            #+#    #+#             */
-/*   Updated: 2024/09/07 01:57:15 by sabras           ###   ########.fr       */
+/*   Updated: 2024/09/08 22:32:05 by sabras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,7 @@ typedef struct s_pipex	t_pipex;
 struct s_data
 {
 	char	*user;
+	char	*home;
 	char	*pwd;
 	char	**env;
 	t_entry	*entry;
@@ -60,8 +61,8 @@ struct s_cmd
 	char	*path;
 	t_arg	*arg_lst;
 	int		arg_count;
-	int		outfile;
 	int		infile;
+	int		outfile;
 	t_cmd	*next;
 };
 
@@ -73,10 +74,12 @@ struct s_arg
 
 struct s_parse
 {
-	char	*content;
+	char	*input;
 	char	*parsed;
+	char	quote;
 	int		size;
-	int		warning;
+	int		i;
+	int		j;
 };
 
 struct s_pipex
@@ -89,51 +92,47 @@ struct s_pipex
 };
 
 // -- Enumerations --
-enum e_parse_warnings
+enum e_redir
 {
-	NullContent = 1
+	FILE_IN = 1, // '<'
+	HERE_DOC = 2, // '<<'
+	FILE_OUT = 3, // '>'
+	FILE_OUT_APP = 4 // '>>'
 };
 
 // --- Parsing ---
-// token.c
-t_token	*tokenize_input(t_data *data, char *input);
-
-// token_utils.c
-char	*insert_value(t_parse *parse, char **env, int *i, int *j);
-char	*insert_home(t_parse *parse, char **env, int *j);
-char	*get_variable(char *content);
-void	clear_parse(t_parse *parse);
-
-// token_utils2.c
-char	toggle_quote(char c, char quote);
-int		count_spaces(char *str);
-int		count_opt(char *str, char opt);
+// tokenize.c
+void	tokenize_input(t_data *data, char *input);
 
 // input.c
 void	parse_input(t_data *data, t_entry *entry);
-void	add_file(t_cmd *cmd, char *redirection, char *content);
-char	*get_cmd_path(t_data *data, char *name);
-char	*get_cmd_name(t_data *data, char *path);
 
 // input_utils.c
+char	*insert_value(t_data *data, t_parse *p);
+char	*insert_home(t_data *data, t_parse *p);
+
+// command.c
+char	*get_cmd_name(t_data *data, char *path);
+char	*get_cmd_path(t_data *data, char *name);
 int		is_command(t_data *data, char *content);
-int		is_redirec(char *content);
 
 // prompt.c
 char	*create_prompt(t_data *data);
 
-// env.carg_lst
+// environment.c
 void	read_env(t_data *data, char **env);
 char	*ft_getenv(char *key, char **env);
 
 // syntax.c
 int		check_syntax(t_token *token_lst);
+int		check_redir(char *s);
 
-// char.c
+// metachars.c
+char	toggle_quote(char c, char quote);
 int		is_opt(char c);
 int		is_quote(char c);
 int		is_valid_key(char c);
-int		is_valid_home(char c);
+int		is_valid_tilde(char c);
 
 // --- Execution ---
 void	pipex(t_data *data);
@@ -160,7 +159,7 @@ char	**copy_tab(t_data *data);
 
 void	ft_unset(t_cmd *cmd, t_data *data);
 
-// --- Utils ---
+// --- Structs ---
 // data.c
 t_data	init_data(char **env);
 void	clear_data(t_data *data);
@@ -170,13 +169,12 @@ t_entry	*init_entry(t_data *data);
 void	clear_entry(t_entry *entry);
 
 // token.c
-void	add_token(t_data *data, t_token **token_lst, char *content);
+void	add_token(t_data *data, t_entry *entry, char *content);
 void	clear_token_lst(t_token *token_lst);
 
 // cmd.c
-t_cmd	*init_cmd(t_data *data);
+t_cmd	*init_cmd(t_data *data, char *content);
 void	add_cmd(t_entry *entry, t_cmd *cmd);
-void	set_cmd_data(t_data *data, t_cmd *cmd, char *content);
 void	clear_cmd_lst(t_cmd *cmd_lst);
 
 // arg.c
@@ -184,6 +182,11 @@ t_arg	*init_arg(t_data *data, char *content);
 void	add_arg(t_data *data, t_cmd *cmd, char *content);
 void	clear_arg_lst(t_arg *arg_lst);
 
+// parse.c
+t_parse	init_parse(t_data *data, char *input);
+void	clear_parse(t_parse *parse);
+
+// --- Utils ---
 // memory.c
 char	*ft_realloc(char *s, size_t size);
 void	*ft_realloc2(void *ptr, size_t original_size, size_t new_size);
