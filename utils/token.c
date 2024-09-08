@@ -6,31 +6,30 @@
 /*   By: sabras <sabras@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/06 17:46:50 by sabras            #+#    #+#             */
-/*   Updated: 2024/09/06 17:47:41 by sabras           ###   ########.fr       */
+/*   Updated: 2024/09/08 03:45:42 by sabras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	add_token(t_data *data, t_token **token_lst, char *content)
+void	add_token(t_data *data, t_entry *entry, char *content)
 {
-	t_token	*node;
+	t_token	*token;
 	t_token	*tmp;
 
-	node = malloc(sizeof(t_token));
-	if (!node)
-		return (clear_token_lst(*token_lst),
-			throw_error("malloc failure", data));
-	node->content = content;
-	node->next = NULL;
-	if (!*token_lst)
-		*token_lst = node;
+	token = malloc(sizeof(t_token));
+	if (!token)
+		return (throw_error("malloc failure", data));
+	token->content = content;
+	token->next = NULL;
+	if (!entry->token_lst)
+		entry->token_lst = token;
 	else
 	{
-		tmp = *token_lst;
+		tmp = entry->token_lst;
 		while (tmp->next)
 			tmp = tmp->next;
-		tmp->next = node;
+		tmp->next = token;
 	}
 }
 
