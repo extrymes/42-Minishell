@@ -11,14 +11,18 @@ BUILT_FILES = builtins.c pwd.c echo.c cd.c env.c exit.c unset.c export.c export_
 BUILT_SRCS = $(addprefix $(BUILT_DIR)/,$(BUILT_FILES))
 
 PARS_DIR = parsing
-PARS_FILES = tokenize.c tokenize_utils.c tokenize_utils2.c input.c input_utils.c prompt.c variables.c syntax.c char.c
+PARS_FILES = tokenize.c input.c input_utils.c command.c prompt.c environment.c syntax.c metachars.c
 PARS_SRCS = $(addprefix $(PARS_DIR)/,$(PARS_FILES))
 
+STRUCT_DIR = structs
+STRUCT_FILES =  data.c entry.c token.c cmd.c arg.c parse.c
+STRUCT_SRCS = $(addprefix $(STRUCT_DIR)/,$(STRUCT_FILES))
+
 UTIL_DIR = utils
-UTIL_FILES =  data.c entry.c token.c cmd.c arg.c memory.c strjoin_free.c error.c
+UTIL_FILES =  memory.c strjoin_free.c error.c
 UTIL_SRCS = $(addprefix $(UTIL_DIR)/,$(UTIL_FILES))
 
-OBJS = $(SRCS:.c=.o) $(EXEC_SRCS:.c=.o) $(BUILT_SRCS:.c=.o) $(PARS_SRCS:.c=.o) $(UTIL_SRCS:.c=.o)
+OBJS = $(SRCS:.c=.o) $(EXEC_SRCS:.c=.o) $(BUILT_SRCS:.c=.o) $(PARS_SRCS:.c=.o) $(STRUCT_SRCS:.c=.o) $(UTIL_SRCS:.c=.o)
 
 HDR_DIR = includes
 
