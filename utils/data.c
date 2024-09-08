@@ -6,7 +6,7 @@
 /*   By: sabras <sabras@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/26 09:58:23 by sabras            #+#    #+#             */
-/*   Updated: 2024/09/07 01:57:26 by sabras           ###   ########.fr       */
+/*   Updated: 2024/09/08 03:22:01 by sabras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@ t_data	init_data(char **env)
 
 	read_env(&data, env);
 	data.user = alloc_str(&data, ft_getenv("USER", data.env));
+	data.home = alloc_str(&data, ft_getenv("HOME", data.env));
 	data.pwd = getcwd(NULL, 0);
 	if (!data.pwd)
 		data.pwd = alloc_str(&data, "");
@@ -38,6 +39,8 @@ void	clear_data(t_data *data)
 	}
 	if (data->user)
 		free(data->user);
+	if (data->home)
+		free(data->home);
 	if (data->pwd)
 		free(data->pwd);
 	clear_entry(data->entry);
