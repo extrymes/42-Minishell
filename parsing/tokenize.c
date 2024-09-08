@@ -6,7 +6,7 @@
 /*   By: sabras <sabras@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/03 11:05:01 by sabras            #+#    #+#             */
-/*   Updated: 2024/09/08 03:56:00 by sabras           ###   ########.fr       */
+/*   Updated: 2024/09/08 04:41:12 by sabras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,8 @@
 
 static char	*get_content(t_data *data, char *input);
 static char	*handle_quotes(t_data *data, char *content);
+static int	count_spaces(char *str);
+static int	count_opt(char *str, char opt);
 
 void	tokenize_input(t_data *data, char *input)
 {
@@ -78,5 +80,25 @@ static char	*handle_quotes(t_data *data, char *content)
 	}
 	parsed[j] = '\0';
 	return (free(content), parsed);
+}
+
+static int	count_spaces(char *str)
+{
+	int	i;
+
+	i = 0;
+	while (ft_isspace(str[i]))
+		i++;
+	return (i);
+}
+
+static int	count_opt(char *str, char opt)
+{
+	int	i;
+
+	i = 0;
+	while (str[i] == opt)
+		i++;
+	return (i);
 }
 
