@@ -1,41 +1,40 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   char.c                                             :+:      :+:    :+:   */
+/*   parse.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: sabras <sabras@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/09/04 11:51:58 by sabras            #+#    #+#             */
-/*   Updated: 2024/09/06 17:15:12 by sabras           ###   ########.fr       */
+/*   Created: 2024/09/08 04:19:57 by sabras            #+#    #+#             */
+/*   Updated: 2024/09/08 04:57:30 by sabras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	is_opt(char c)
+t_parse	init_parse(t_data *data, char *input)
 {
-	if (c == '|' || c == '<' || c == '>')
-		return (1);
-	return (0);
+	t_parse	p;
+
+	p.input = input;
+	p.parsed = alloc_str(data, input);
+	p.quote = 0;
+	p.size = ft_strlen(input);
+	p.i = -1;
+	p.j = 0;
+	return (p);
 }
 
-int	is_quote(char c)
+void	clear_parse(t_parse *p)
 {
-	if (c == '\'' || c == '\"')
-		return (1);
-	return (0);
-}
-
-int	is_valid_key(char c)
-{
-	if (ft_isalnum(c) || c == '_')
-		return (1);
-	return (0);
-}
-
-int	is_valid_home(char c)
-{
-	if (!c || c == ' ' || c == '/')
-		return (1);
-	return (0);
+	if (p->input)
+	{
+		free(p->input);
+		p->input = NULL;
+	}
+	if (p->parsed)
+	{
+		free(p->parsed);
+		p->parsed = NULL;
+	}
 }
