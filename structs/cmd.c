@@ -6,7 +6,7 @@
 /*   By: sabras <sabras@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/30 16:33:25 by sabras            #+#    #+#             */
-/*   Updated: 2024/09/08 05:45:59 by sabras           ###   ########.fr       */
+/*   Updated: 2024/09/09 09:09:18 by sabras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,8 @@ static void	find_name_path(t_data *data, t_cmd *cmd, char *content)
 			throw_error("malloc failure", data);
 		if (!ft_strstr(BUILTINS, cmd->name))
 			cmd->path = get_cmd_path(data, content);
+		else
+			cmd->path = NULL;
 	}
 }
 
@@ -73,7 +75,8 @@ void	clear_cmd_lst(t_cmd *cmd_lst)
 	{
 		tmp = cmd_lst;
 		free(cmd_lst->name);
-		free(cmd_lst->path);
+		if (cmd_lst->path)
+			free(cmd_lst->path);
 		clear_arg_lst(cmd_lst->arg_lst);
 		cmd_lst = cmd_lst->next;
 		free(tmp);
