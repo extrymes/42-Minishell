@@ -6,7 +6,7 @@
 /*   By: sabras <sabras@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/30 16:33:25 by sabras            #+#    #+#             */
-/*   Updated: 2024/09/09 09:09:18 by sabras           ###   ########.fr       */
+/*   Updated: 2024/09/09 10:55:04 by sabras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,8 +24,7 @@ t_cmd	*init_cmd(t_data *data, char *content)
 	find_name_path(data, cmd, content);
 	cmd->arg_lst = NULL;
 	cmd->arg_count = 0;
-	cmd->outfile = 0;
-	cmd->infile = 0;
+	cmd->file_lst = NULL;
 	cmd->next = NULL;
 	return (cmd);
 }
@@ -69,16 +68,17 @@ void	add_cmd(t_entry *entry, t_cmd *cmd)
 
 void	clear_cmd_lst(t_cmd *cmd_lst)
 {
-	t_cmd	*tmp;
+	t_cmd	*cmd;
 
 	while (cmd_lst)
 	{
-		tmp = cmd_lst;
-		free(cmd_lst->name);
-		if (cmd_lst->path)
-			free(cmd_lst->path);
-		clear_arg_lst(cmd_lst->arg_lst);
+		cmd = cmd_lst;
+		free(cmd->name);
+		if (cmd->path)
+			free(cmd->path);
+		clear_arg_lst(cmd->arg_lst);
+		clear_file_lst(cmd->file_lst);
 		cmd_lst = cmd_lst->next;
-		free(tmp);
+		free(cmd);
 	}
 }
