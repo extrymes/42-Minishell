@@ -94,10 +94,10 @@ struct s_pipex
 // -- Enumerations --
 enum e_redir
 {
-	FILE_IN = 1, // '<'
-	HERE_DOC = 2, // '<<'
-	FILE_OUT = 3, // '>'
-	FILE_OUT_APP = 4 // '>>'
+	FILE_IN = 1,
+	HERE_DOC = 2,
+	FILE_OUT = 3,
+	FILE_OUT_APP = 4
 };
 
 // --- Parsing ---
