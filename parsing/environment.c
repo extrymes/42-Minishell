@@ -6,7 +6,7 @@
 /*   By: sabras <sabras@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/26 10:54:02 by sabras            #+#    #+#             */
-/*   Updated: 2024/09/08 06:21:25 by sabras           ###   ########.fr       */
+/*   Updated: 2024/09/10 13:12:09 by sabras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,13 +21,13 @@ void	read_env(t_data *data, char **env)
 		i++;
 	data->env = malloc((i + 1) * sizeof(char *));
 	if (!data->env)
-		throw_error("malloc failure", data);
+		throw_error(data, "malloc failure");
 	i = 0;
 	while (env[i])
 	{
 		data->env[i] = ft_strdup(env[i]);
 		if (!data->env[i])
-			throw_error("malloc failure", data);
+			throw_error(data, "malloc failure");
 		i++;
 	}
 	data->env[i] = NULL;

@@ -6,7 +6,7 @@
 /*   By: sabras <sabras@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/05 19:39:21 by sabras            #+#    #+#             */
-/*   Updated: 2024/09/06 06:07:50 by sabras           ###   ########.fr       */
+/*   Updated: 2024/09/10 13:07:52 by sabras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ t_arg	*init_arg(t_data *data, char *content)
 
 	arg = malloc(sizeof(t_arg));
 	if (!arg)
-		return (throw_error("malloc failure", data), NULL);
+		throw_error(data, "malloc failure");
 	arg->data = ft_strdup(content);
 	arg->next = NULL;
 	return (arg);
@@ -44,13 +44,13 @@ void	add_arg(t_data *data, t_cmd *cmd, char *content)
 
 void	clear_arg_lst(t_arg *arg_lst)
 {
-	t_arg	*tmp;
+	t_arg	*arg;
 
 	while (arg_lst)
 	{
-		tmp = arg_lst;
-		free(arg_lst->data);
+		arg = arg_lst;
+		free(arg->data);
 		arg_lst = arg_lst->next;
-		free(tmp);
+		free(arg);
 	}
 }

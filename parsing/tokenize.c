@@ -6,7 +6,7 @@
 /*   By: sabras <sabras@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/03 11:05:01 by sabras            #+#    #+#             */
-/*   Updated: 2024/09/09 11:34:19 by sabras           ###   ########.fr       */
+/*   Updated: 2024/09/10 13:07:46 by sabras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ static char	*get_content(t_data *data, char *input)
 		i = count_opt(input, input[i]);
 	content = malloc((i + 1) * sizeof(char));
 	if (!content)
-		return (throw_error("malloc failure", data), NULL);
+		throw_error(data, "malloc failure");
 	j = -1;
 	while (++j < i)
 		content[j] = input[j];
@@ -67,7 +67,7 @@ static char	*handle_quotes(t_data *data, char *content)
 		return (content);
 	parsed = malloc((ft_strlen(content) + 1) * sizeof(char));
 	if (!parsed)
-		return (free(content), throw_error("malloc failure", data), NULL);
+		throw_error(data, "malloc failure");
 	quote = 0;
 	i = 0;
 	j = 0;

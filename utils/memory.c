@@ -6,7 +6,7 @@
 /*   By: sabras <sabras@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/24 11:27:31 by sabras            #+#    #+#             */
-/*   Updated: 2024/09/07 01:57:38 by sabras           ###   ########.fr       */
+/*   Updated: 2024/09/10 13:05:55 by sabras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,7 @@ char	*alloc_str(t_data *data, char *str)
 	else
 		allocated = ft_strdup("");
 	if (!allocated)
-		throw_error("malloc failure", data);
+		throw_error(data, "malloc failure");
 	return (allocated);
 }
 

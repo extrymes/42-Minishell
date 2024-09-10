@@ -6,7 +6,7 @@
 /*   By: sabras <sabras@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 10:25:06 by sabras            #+#    #+#             */
-/*   Updated: 2024/09/09 10:54:59 by sabras           ###   ########.fr       */
+/*   Updated: 2024/09/10 13:08:28 by sabras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ t_file	*init_file(t_data *data, char *content, int redir)
 
 	file = malloc(sizeof(t_file));
 	if (!file)
-		return (throw_error("malloc failure", data), NULL);
+		throw_error(data, "malloc failure");
 	file->name = alloc_str(data, content);
 	file->redir = redir;
 	file->next = NULL;
