@@ -6,7 +6,7 @@
 /*   By: sabras <sabras@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/06 17:46:50 by sabras            #+#    #+#             */
-/*   Updated: 2024/09/10 14:04:17 by sabras           ###   ########.fr       */
+/*   Updated: 2024/09/10 23:41:19 by sabras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,6 @@ void	add_token(t_data *data, t_entry *entry, char *content, int type)
 
 int	get_token_type(char *content)
 {
-
 	if (!ft_strcmp(content, "|") || !ft_strcmp(content, "||"))
 		return (PIPE);
 	if (!ft_strcmp(content, "<"))
