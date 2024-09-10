@@ -6,7 +6,7 @@
 /*   By: sabras <sabras@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/30 20:57:35 by sabras            #+#    #+#             */
-/*   Updated: 2024/09/10 15:12:45 by sabras           ###   ########.fr       */
+/*   Updated: 2024/09/10 22:25:05 by sabras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ char	*insert_value(t_data *data, t_parse *p)
 
 	variable = get_variable(p->input + p->i + 1);
 	if (!variable)
-		return (clear_parse(p), throw_error(data, "malloc failure"), NULL);
+		return (free(p->parsed), throw_error(data, "malloc failure"), NULL);
 	value = ft_getenv(variable, data->env);
 	diff = (ft_strlen(variable) + 1) - ft_strlen(value);
 	if (diff < 0)
@@ -30,7 +30,7 @@ char	*insert_value(t_data *data, t_parse *p)
 		p->size += -diff;
 		p->parsed = ft_realloc(p->parsed, p->size);
 		if (!p->parsed)
-			return (clear_parse(p), throw_error(data, "malloc failure"), NULL);
+			return (free(variable), throw_error(data, "malloc failure"), NULL);
 	}
 	if (value)
 		ft_strcpy(p->parsed + p->j, value);
@@ -46,19 +46,19 @@ char	*insert_code(t_data *data, t_parse *p)
 
 	code = ft_itoa(data->exit_code);
 	if (!code)
-		return (clear_parse(p), throw_error(data, "malloc failure"), NULL);
+		return (free(p->parsed), throw_error(data, "malloc failure"), NULL);
 	diff = 1 - ft_strlen(code);
 	if (diff < 0)
 	{
 		p->size += -diff;
 		p->parsed = ft_realloc(p->parsed, p->size);
 		if (!p->parsed)
-			return (clear_parse(p), throw_error(data, "malloc failure"), NULL);
+			return (free(code), throw_error(data, "malloc failure"), NULL);
 	}
 	ft_strcpy(p->parsed + p->j, code);
 	p->i += 1;
 	p->j += ft_strlen(code);
-	return (p->parsed);
+	return (free(code), p->parsed);
 }
 
 char	*insert_home(t_data *data, t_parse *p)
@@ -75,7 +75,7 @@ char	*insert_home(t_data *data, t_parse *p)
 		p->size += -diff;
 		p->parsed = ft_realloc(p->parsed, p->size);
 		if (!p->parsed)
-			return (clear_parse(p), throw_error(data, "malloc failure"), NULL);
+			throw_error(data, "malloc failure");
 	}
 	if (home)
 		ft_strcpy(p->parsed + p->j, home);

@@ -6,7 +6,7 @@
 /*   By: sabras <sabras@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/03 11:05:01 by sabras            #+#    #+#             */
-/*   Updated: 2024/09/10 14:04:29 by sabras           ###   ########.fr       */
+/*   Updated: 2024/09/10 22:37:36 by sabras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,7 @@ static char	*handle_quotes(t_data *data, char *content)
 		return (content);
 	parsed = malloc((ft_strlen(content) + 1) * sizeof(char));
 	if (!parsed)
-		throw_error(data, "malloc failure");
+		return (free(content), throw_error(data, "malloc failure"), NULL);
 	quote = 0;
 	i = 0;
 	j = 0;
