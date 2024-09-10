@@ -6,7 +6,7 @@
 /*   By: sabras <sabras@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/30 20:57:35 by sabras            #+#    #+#             */
-/*   Updated: 2024/09/10 13:04:07 by sabras           ###   ########.fr       */
+/*   Updated: 2024/09/10 15:12:45 by sabras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,28 @@ char	*insert_value(t_data *data, t_parse *p)
 	p->i += ft_strlen(variable);
 	p->j += ft_strlen(value);
 	return (free(variable), p->parsed);
+}
+
+char	*insert_code(t_data *data, t_parse *p)
+{
+	char	*code;
+	int		diff;
+
+	code = ft_itoa(data->exit_code);
+	if (!code)
+		return (clear_parse(p), throw_error(data, "malloc failure"), NULL);
+	diff = 1 - ft_strlen(code);
+	if (diff < 0)
+	{
+		p->size += -diff;
+		p->parsed = ft_realloc(p->parsed, p->size);
+		if (!p->parsed)
+			return (clear_parse(p), throw_error(data, "malloc failure"), NULL);
+	}
+	ft_strcpy(p->parsed + p->j, code);
+	p->i += 1;
+	p->j += ft_strlen(code);
+	return (p->parsed);
 }
 
 char	*insert_home(t_data *data, t_parse *p)

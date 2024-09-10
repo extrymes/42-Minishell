@@ -6,7 +6,7 @@
 /*   By: sabras <sabras@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/26 09:58:23 by sabras            #+#    #+#             */
-/*   Updated: 2024/09/09 15:14:24 by sabras           ###   ########.fr       */
+/*   Updated: 2024/09/10 14:38:03 by sabras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@ t_data	init_data(char **env)
 		data.pwd = alloc_str(&data, "");
 	data.stdin_fd = dup(STDIN_FILENO);
 	data.stdout_fd = dup(STDOUT_FILENO);
+	data.exit_code = 0;
 	data.entry = NULL;
 	return (data);
 }
