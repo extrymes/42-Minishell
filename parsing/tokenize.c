@@ -6,7 +6,7 @@
 /*   By: sabras <sabras@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/03 11:05:01 by sabras            #+#    #+#             */
-/*   Updated: 2024/09/10 22:37:36 by sabras           ###   ########.fr       */
+/*   Updated: 2024/09/11 00:52:59 by sabras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,8 +77,7 @@ static char	*handle_quotes(t_data *data, char *content)
 	{
 		if (!is_quote(content[i]) || (quote && quote != content[i]))
 			parsed[j++] = content[i];
-		quote = toggle_quote(content[i], quote);
-		i++;
+		quote = toggle_quote(content[i++], quote);
 	}
 	parsed[j] = '\0';
 	return (free(content), parsed);

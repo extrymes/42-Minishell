@@ -6,14 +6,14 @@
 /*   By: sabras <sabras@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/29 19:56:48 by sabras            #+#    #+#             */
-/*   Updated: 2024/09/10 14:57:06 by sabras           ###   ########.fr       */
+/*   Updated: 2024/09/11 00:03:03 by sabras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
 static char	*handle_variables(t_data *data, char *input);
-static int	find_cmd_data(t_data *data, t_cmd *cmd, t_token *token, int *err);
+static int	find_cmd(t_data *data, t_cmd *cmd, t_token *token, int *err);
 static int	find_file(t_data *data, t_cmd *cmd, t_token *token, int *err);
 
 int	parse_input(t_data *data, t_entry *entry)
@@ -32,7 +32,7 @@ int	parse_input(t_data *data, t_entry *entry)
 	while (token)
 	{
 		if (!cmd->name)
-			find_cmd_data(data, cmd, token, &err);
+			find_cmd(data, cmd, token, &err);
 		if (token->content[0] == '|')
 			cmd = init_cmd(data);
 		if (find_file(data, cmd, token, &err))
@@ -51,7 +51,7 @@ static char	*handle_variables(t_data *data, char *input)
 	if (!ft_strchr(input, '$') && !ft_strchr(input, '~'))
 		return (input);
 	p = init_parse(data, input);
-	while (input[++p.i])
+	while (input[p.i])
 	{
 		if (input[p.i] == '$' && check_key(input[p.i + 1]) && p.quote != '\'')
 			p.parsed = insert_value(data, &p);
@@ -61,13 +61,13 @@ static char	*handle_variables(t_data *data, char *input)
 			p.parsed = insert_home(data, &p);
 		else
 			p.parsed[p.j++] = input[p.i];
-		p.quote = toggle_quote(input[p.i], p.quote);
+		p.quote = toggle_quote(input[p.i++], p.quote);
 	}
 	p.parsed[p.j] = '\0';
 	return (p.parsed);
 }
 
-static int	find_cmd_data(t_data *data, t_cmd *cmd, t_token *token, int *err)
+static int	find_cmd(t_data *data, t_cmd *cmd, t_token *token, int *err)
 {
 	if (token->type >= FILE_IN)
 		token = token->next->next;
