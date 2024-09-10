@@ -19,7 +19,7 @@ char	*get_cmd_path(t_data *data, char *name)
 	char	*joined;
 	int		i;
 
-	if (ft_strchr(name, '/'))
+	if (!is_alpha(name))
 		return (NULL);
 	path = ft_getenv("PATH", data->env);
 	if (!path)
@@ -67,6 +67,8 @@ int	check_command(t_data *data, char *content)
 	path = get_cmd_path(data, content);
 	if (path)
 		return (free(path), 1);
+	if (!ft_strcmp(content, "."))
+		return (print_cmd_error(content, NULL, "filename argument required"), 0);
 	if (ft_strchr(content, '/'))
 	{
 		if (access(content, F_OK) != 0)
