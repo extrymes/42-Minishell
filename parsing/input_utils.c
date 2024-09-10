@@ -6,26 +6,76 @@
 /*   By: sabras <sabras@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/30 20:57:35 by sabras            #+#    #+#             */
-/*   Updated: 2024/08/30 22:36:35 by sabras           ###   ########.fr       */
+/*   Updated: 2024/09/09 11:42:03 by sabras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-int	count_spaces(char *str)
-{
-	int	i;
+#include "minishell.h"
 
-	i = 0;
-	while (str[i] == ' ' || str[i] == '\t')
-		i++;
-	return (i);
+static char	*get_variable(char *content);
+
+char	*insert_value(t_data *data, t_parse *p)
+{
+	char	*variable;
+	char	*value;
+	int		diff;
+
+	variable = get_variable(p->input + p->i + 1);
+	if (!variable)
+		return (clear_parse(p), throw_error("malloc failure", data), NULL);
+	value = ft_getenv(variable, data->env);
+	diff = (ft_strlen(variable) + 1) - ft_strlen(value);
+	if (diff < 0)
+	{
+		p->size += -diff;
+		p->parsed = ft_realloc(p->parsed, p->size);
+		if (!p->parsed)
+			return (clear_parse(p), throw_error("malloc failure", data), NULL);
+	}
+	if (value)
+		ft_strcpy(p->parsed + p->j, value);
+	p->i += ft_strlen(variable);
+	p->j += ft_strlen(value);
+	return (free(variable), p->parsed);
 }
 
-int	count_word_len(char *str)
+char	*insert_home(t_data *data, t_parse *p)
 {
-	int	i;
+	char	*home;
+	int		diff;
+
+	home = ft_getenv("HOME", data->env);
+	if (!home)
+		home = data->home;
+	diff = 1 - ft_strlen(home);
+	if (diff < 0)
+	{
+		p->size += -diff;
+		p->parsed = ft_realloc(p->parsed, p->size);
+		if (!p->parsed)
+			return (clear_parse(p), throw_error("malloc failure", data), NULL);
+	}
+	if (home)
+		ft_strcpy(p->parsed + p->j, home);
+	p->j += ft_strlen(home);
+	return (p->parsed);
+}
+
+static char	*get_variable(char *content)
+{
+	char	*variable;
+	int		i;
+	int		j;
 
 	i = 0;
-	while (str[i] && str[i] != ' ' && str[i] != '\t')
+	while (content[i] && check_key(content[i]))
 		i++;
-	return (i);
+	variable = malloc((i + 1) * sizeof(char));
+	if (!variable)
+		return (NULL);
+	j = -1;
+	while (++j < i)
+		variable[j] = content[j];
+	variable[j] = '\0';
+	return (variable);
 }
