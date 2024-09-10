@@ -1,7 +1,7 @@
 CC = cc
-FLAGS = -Wall -Werror -Wextra
+FLAGS = -Wall -g -Werror -Wextra
 NAME = pipex
-SRC = pipex.c pipex_util.c free_exec.c ../builtins/builtins.c ../builtins/pwd.c ../builtins/echo.c ../builtins/cd.c ../builtins/env.c ../builtins/exit.c ../builtins/unset.c ../builtins/export.c
+SRC = pipex.c pipex_utils.c free_exec.c ../builtins/builtins.c ../builtins/pwd.c ../builtins/echo.c ../builtins/cd.c ../builtins/env.c ../builtins/exit.c ../builtins/unset.c ../builtins/export.c ../builtins/export_utils.c test.c
 INCLUDES = ./includes/
 LIBFT = ../libft/libft.a
 OBJ = $(SRC:.c=.o)
@@ -23,7 +23,7 @@ ll : all
 
 vv : all
 	@clear
-	@valgrind --trace-children=yes ./pipex
+	@valgrind --trace-children=yes --leak-check=full ./pipex
 
 $(LIBFT) :
 	@make -C ../libft

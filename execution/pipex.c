@@ -6,7 +6,7 @@
 /*   By: sabras <sabras@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/29 14:36:25 by msimao            #+#    #+#             */
-/*   Updated: 2024/09/06 13:37:28 by sabras           ###   ########.fr       */
+/*   Updated: 2024/09/10 16:14:45 by sabras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,15 +20,15 @@ void	ft_exec(t_cmd *cmd, t_data *data)
 	i = 0;
 	tab = malloc(sizeof(char *) * (cmd->arg_count + 2));
 	if (tab == NULL)
-		error_exec(data);
+		error_exec(data, NULL);
 	tab[0] = ft_strdup(cmd->name);
 	if (tab[0] == NULL)
-		error_exec(data);
+		error_exec(data, NULL);
 	while (cmd->arg_count != 0 && cmd->arg_lst)
 	{
 		tab[i + 1] = ft_strdup(cmd->arg_lst->data);
 		if (tab[i + 1] == NULL)
-			error_exec(data);
+			error_exec(data, NULL);
 		cmd->arg_lst = cmd->arg_lst->next;
 		i++;
 	}
@@ -43,20 +43,22 @@ int	child(t_data *data, t_pipex *pipex, int i)
 	t_cmd	*cmd;
 
 	if (pipe(pipex->tube) < 0)
-		return (0); // bon + print
+		return (perror(NULL), error_exec(data, NULL), 0);
 	pipex->pid[i] = fork();
 	if (pipex->pid[i] < 0)
-		return (0); // bon + print
+		return (perror(NULL), error_exec(data, NULL), 0);
 	if (pipex->pid[i] == 0)
 	{
-		free(pipex->pid);
 		dup2(pipex->tube[1], STDOUT_FILENO);
-		close(pipex->tube[1]);
-		close(pipex->tube[0]);
-		// ft_close(pipex->infile);
 		cmd = get_cmd_by_id(data->entry->cmd_lst, i);
+		set_file(cmd->file_lst, pipex);
+		free(pipex->pid);
+		close(pipex->tube[0]);
+		close(pipex->tube[1]);
+		close(data->stdout_fd);
+		close(data->stdin_fd);
 		if (cmd->path == NULL)
-			builtins(cmd, data, 1); // strncmp path builtins
+			builtins(cmd, data, 1);
 		ft_exec(cmd, data);
 	}
 	dup2(pipex->tube[0], STDIN_FILENO);
@@ -67,56 +69,39 @@ int	child(t_data *data, t_pipex *pipex, int i)
 
 int	parent(t_data *data, t_pipex *pipex, int i)
 {
-	pid_t	pid;
 	t_cmd	*cmd;
 
-	pid = fork();
-	if (pid < 0)
-		return (0); // bon + print
-	if (pid == 0)
+	pipex->pid[i] = fork();
+	if (pipex->pid[i] < 0)
+		return (perror(NULL), error_exec(data, NULL), 0);
+	if (pipex->pid[i] == 0)
 	{
 		free(pipex->pid);
-		// if (pipex->outfile != 0)
-		// {
-		// 	dup2(pipex->outfile, STDOUT_FILENO);
-		// 	close(pipex->outfile);
-		// }
-		close(pipex->tube[1]);
-		close(pipex->tube[0]);
+		close(data->stdout_fd);
+		close(data->stdin_fd);
 		cmd = get_cmd_by_id(data->entry->cmd_lst, i);
+		set_file(cmd->file_lst, pipex);
 		if (cmd->path == NULL)
-			builtins(cmd, data, 1); // strncmp path builtins
+			builtins(cmd, data, 1);
 		ft_exec(cmd, data);
 	}
-	reset_std(pipex);
-	return (waitpid(pid, NULL, 0), 1);
+	return (1);
 }
 
 void	multi_cmd(t_data *data, t_pipex *pipex)
 {
 	int		i;
-	int		j;
 
 	i = 0;
 	while (i < data->entry->cmd_count - 1)
 	{
 		if (!child(data, pipex, i))
-		{
-			free(pipex->pid);
-			return ;// bon + print
-		}
+			return (free(pipex->pid), error_exec(data, "malloc failure"));
 		i++;
 	}
-	// ft_close(pipex->infile);
 	if (!parent(data, pipex, i))
-	{
-		free(pipex->pid);
-		return ;// bon + print
-	}
-	i -= 1;
-	j = 0;
-	while (j < i)
-		waitpid(pipex->pid[j++], NULL, 0);
+		return (free(pipex->pid), error_exec(data, "malloc failure"));
+	stop_process(data, pipex);
 	free(pipex->pid);
 }
 
@@ -126,96 +111,19 @@ void	pipex(t_data *data)
 
 	if (data->entry->cmd_count == 0)
 		return ;
+	pipex.pid = malloc(sizeof(pid_t) * data->entry->cmd_count);
+	if (!pipex.pid)
+		return (error_exec(data, "malloc failure"));
 	if (data->entry->cmd_count == 1)
 		one_cmd(data, &pipex);
 	else
 	{
-		set_file(&pipex);
-		pipex.pid = malloc(sizeof(pid_t) * data->entry->cmd_count - 1);
-		if (!pipex.pid)
-			return ; // bon + print
 		multi_cmd(data, &pipex);
 		ft_close(pipex.tube[0]);
 		ft_close(pipex.tube[1]);
 	}
-	// ft_close(pipex.outfile);
+	reset_std(data);
+	if (pipex.pid)
+		free(pipex.pid);
 	return ;
 }
-
-// static void	print_env(char **envp)
-// {
-// 	int	i;
-
-// 	i = 0;
-// 	while (envp[i])
-// 	{
-// 		ft_putstr_fd(envp[i++], STDOUT_FILENO);
-// 		ft_putstr_fd("\n", STDOUT_FILENO);
-// 	}
-// 	return ;
-// }
-
-// t_cmd	*init_cmd2(char *name, char *path)
-// {
-// 	t_cmd	*cmd;
-
-// 	cmd = malloc(sizeof(t_cmd));
-// 	cmd->name = name;
-// 	cmd->path = path;
-// 	cmd->arg_lst = NULL;
-// 	cmd->arg_count = 0;
-// 	cmd->infile = 0;
-// 	cmd->outfile = 0;
-// 	cmd->next = NULL;
-// 	return (cmd);
-// }
-
-// t_arg	*init_arg2(char *data)
-// {
-// 	t_arg	*arg;
-
-// 	arg = malloc(sizeof(t_arg));
-// 	arg->data = data;
-// 	arg->next = NULL;
-// 	return (arg);
-// }
-
-// int main(int argc, char const *argv[], char **envp)
-// {
-// 	t_data		data;
-// 	t_cmd		*cmd_1;
-// 	t_cmd		*cmd_2;
-// 	int			i;
-// 	int			j;
-
-// 	i = 0;
-// 	while(envp[i])
-// 		i++;
-// 	data.env = malloc(sizeof(char *) * (i + 1));
-// 	i = 0;
-// 	while(envp[i])
-// 	{
-// 		data.env[i] = ft_strdup(envp[i]);
-// 		i++;
-// 	}
-// 	data.env[i] = 0;
-// 	data.entry = malloc(sizeof(t_entry));
-// 	data.entry->input = NULL;
-// 	// data.entry->outfile = open("test2.txt", O_TRUNC | O_CREAT | O_RDWR, 0644);
-// 	// data.entry->infile = open("test2.txt", O_RDWR, 0644);
-
-// 	data.entry->cmd_count = 1;
-// 	cmd_1 = init_cmd2(ft_strdup("unset"), NULL);
-// 	cmd_1->arg_count = 1;
-// 	cmd_1->arg_lst = init_arg2(ft_strdup("PWD"));
-// 	// cmd_1->arg_lst->next = init_arg2(ft_strdup("Hello World"));
-// 	data.entry->cmd_lst = cmd_1;
-// 	// printf("%s\n", data.entry->cmd_lst->name);
-// 	// printf("%s\n", data.entry->cmd_lst->arg_lst->data);
-
-// 	pipex(&data);
-// 	// print_env(data.env);
-// 	// printf(GREEN ">>> SUCCESS <<<\n" RESET);
-// 	clear_data(&data);
-// 	return 0;
-// }

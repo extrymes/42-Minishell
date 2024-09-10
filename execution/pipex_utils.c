@@ -6,49 +6,57 @@
 /*   By: sabras <sabras@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/29 14:37:15 by msimao            #+#    #+#             */
-/*   Updated: 2024/09/06 13:33:41 by sabras           ###   ########.fr       */
+/*   Updated: 2024/09/10 16:15:45 by sabras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-void	reset_std(t_pipex *pipex)
+void	reset_std(t_data *data)
 {
-	dup2(pipex->saved_stdout, STDOUT_FILENO);
-	dup2(pipex->saved_stdin, STDIN_FILENO);
-	close(pipex->saved_stdout);
-	close(pipex->saved_stdin);
+	dup2(data->stdout_fd, STDOUT_FILENO);
+	dup2(data->stdin_fd, STDIN_FILENO);
 }
 
-void	set_file(t_pipex *pipex)
+void	stop_process(t_data *data, t_pipex *pipex)
 {
-	pipex->saved_stdout = dup(STDOUT_FILENO);
-	pipex->saved_stdin = dup(STDIN_FILENO);
+	int	i;
+	int	exit_status;
+
+	i = 0;
+	while (i < data->entry->cmd_count)
+	{
+		if (waitpid(pipex->pid[i++], &exit_status, 0) > 0 \
+			&& WIFEXITED(exit_status))
+			data->exit_code = WEXITSTATUS(exit_status);
+	}
 }
 
 void	one_cmd(t_data *data, t_pipex *pipex)
 {
-	pid_t	pid;
-
-	(void)pipex;
 	if (data->entry->cmd_lst->path == NULL)
-		return (builtins(data->entry->cmd_lst, data, 0));
-	pid = fork();
-	if (pid < 0)
-		return (ft_putstr_fd("pipe error", 2));
-	if (pid == 0)
 	{
-		// if (pipex->outfile != 0)
-		// {
-		// 	dup2(pipex->outfile, STDOUT_FILENO);
-		// 	close(pipex->outfile);
-		// }
-		// ft_close(pipex->infile);
+		if (ft_strncmp(data->entry->cmd_lst->name, "exit", 4) == 0)
+		{
+			free(pipex->pid);
+			pipex->pid = NULL;
+		}
+		set_file(data->entry->cmd_lst->file_lst, pipex);
+		builtins(data->entry->cmd_lst, data, 0);
+		return ;
+	}
+	pipex->pid[0] = fork();
+	if (pipex->pid[0] < 0)
+		return (ft_putstr_fd("pipe error", 2));
+	if (pipex->pid[0] == 0)
+	{
+		free(pipex->pid);
+		set_file(data->entry->cmd_lst->file_lst, pipex);
+		ft_close(data->stdin_fd);
+		ft_close(data->stdout_fd);
 		ft_exec(data->entry->cmd_lst, data);
 	}
-	// ft_close(pipex->outfile);
-	// ft_close(pipex->infile);
-	waitpid(pid, NULL, 0);
+	stop_process(data, pipex);
 }
 
 t_cmd	*get_cmd_by_id(t_cmd *cmd_lst, int id)
