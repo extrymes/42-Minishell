@@ -6,7 +6,7 @@
 /*   By: sabras <sabras@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/29 15:08:55 by msimao            #+#    #+#             */
-/*   Updated: 2024/09/06 12:33:38 by sabras           ###   ########.fr       */
+/*   Updated: 2024/09/10 16:00:46 by sabras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,11 @@ void	ft_unset(t_cmd *cmd, t_data *data)
 	while (tmp)
 	{
 		tmp->data = strjoin_free(tmp->data, "=", 0);
+		if (is_var_exists(data->env, tmp->data) == 0)
+		{
+			tmp = tmp->next;
+			continue ;
+		}
 		envp = new_env(tmp, data->env);
 		if (!envp)
 			return ;

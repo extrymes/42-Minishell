@@ -6,7 +6,7 @@
 /*   By: sabras <sabras@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/28 11:23:54 by msimao            #+#    #+#             */
-/*   Updated: 2024/09/06 15:57:56 by sabras           ###   ########.fr       */
+/*   Updated: 2024/09/10 15:42:24 by sabras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,22 +45,22 @@
 
 void	builtins(t_cmd *cmd, t_data *data, int in_fork)
 {
-	if (ft_strncmp(cmd->name, "echo", 4) == 0)
-		ft_echo(cmd); //faiss
-	else if (ft_strncmp(cmd->name, "pwd", 3) == 0)
-		ft_pwd(data); //fais
-	else if (ft_strncmp(cmd->name, "env", 3) == 0)
-		ft_env(data); //fais
-	else if (ft_strncmp(cmd->name, "cd", 2) == 0)
-		ft_cd(cmd, data);//fais
-	else if (ft_strncmp(cmd->name, "exit", 4) == 0)
-		ft_exit(data);//fais
-	else if (ft_strncmp(cmd->name, "export", 6) == 0)
-		ft_export(cmd, data); //fais
-	else if (ft_strncmp(cmd->name, "unset", 5) == 0)
-		ft_unset(cmd, data); //fais
-	else
+	if (cmd->name == NULL)
 		return ;
+	else if (ft_strncmp(cmd->name, "echo", 4) == 0)
+		ft_echo(cmd);
+	else if (ft_strncmp(cmd->name, "pwd", 3) == 0)
+		ft_pwd(data);
+	else if (ft_strncmp(cmd->name, "env", 3) == 0)
+		ft_env(data);
+	else if (ft_strncmp(cmd->name, "cd", 2) == 0)
+		ft_cd(cmd, data);
+	else if (ft_strncmp(cmd->name, "exit", 4) == 0)
+		ft_exit(cmd, data);
+	else if (ft_strncmp(cmd->name, "export", 6) == 0)
+		ft_export(cmd, data);
+	else if (ft_strncmp(cmd->name, "unset", 5) == 0)
+		ft_unset(cmd, data);
 	if (in_fork == 1)
 	{
 		clear_data(data);

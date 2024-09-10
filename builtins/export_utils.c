@@ -6,7 +6,7 @@
 /*   By: sabras <sabras@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/03 16:42:42 by msimao            #+#    #+#             */
-/*   Updated: 2024/09/06 15:23:00 by sabras           ###   ########.fr       */
+/*   Updated: 2024/09/09 09:01:26 by sabras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,12 +46,7 @@ char	**copy_tab(t_data *data)
 	{
 		envp[i] = ft_strdup(data->env[i]);
 		if (!envp[i])
-		{
-			while (i-- > 0)
-				free(envp[i]);
-			free(envp);
-			return (NULL);
-		}
+			return (free_split(envp), NULL);
 		i++;
 	}
 	envp[i] = NULL;

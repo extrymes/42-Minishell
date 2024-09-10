@@ -6,11 +6,22 @@
 /*   By: sabras <sabras@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/29 13:59:47 by msimao            #+#    #+#             */
-/*   Updated: 2024/09/06 18:41:52 by sabras           ###   ########.fr       */
+/*   Updated: 2024/09/10 12:12:55 by sabras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
+
+static char	*find_home(t_cmd *cmd, char **env)
+{
+	char	*home;
+
+	home = ft_getenv("HOME", env);
+	if (!home)
+		return (cmd_error(cmd->name, NULL, "HOME not set"), NULL);
+	home = ft_strdup(home);
+	return (home);
+}
 
 static char	*find_old(t_data *data)
 {
@@ -38,6 +49,8 @@ static void	set_pwd(t_data *data)
 	{
 		free(data->env[i]);
 		data->env[i] = strjoin_free("PWD=", getcwd(NULL, 0), 1);
+		if (!data->env[i])
+			return ;
 	}
 	else
 	{
@@ -64,6 +77,8 @@ static void	set_old(t_data *data)
 	{
 		free(data->env[i]);
 		data->env[i] = ft_strjoin("OLDPWD=", data->pwd);
+		if (!data->env[i])
+			return ;
 	}
 	else
 	{
@@ -84,17 +99,16 @@ void	ft_cd(t_cmd *cmd, t_data *data)
 {
 	char	*path;
 
-	if (cmd->arg_count != 1)
-		return ;
-	if (ft_strncmp(cmd->arg_lst->data, "-", 1) == 0)
+	if (cmd->arg_count == 0)
+		path = find_home(cmd, data->env);
+	else if (ft_strncmp(cmd->arg_lst->data, "-", 1) == 0)
 		path = find_old(data);
 	else
 		path = ft_strdup(cmd->arg_lst->data);
 	if (!path)
 		return ;
 	if (chdir(path) == -1)
-		return (print_cmd_error(cmd->name, \
-		"no such file or directory", cmd->arg_lst->data));
+		return (cmd_error(cmd->name, path, "No such file or directory"));
 	set_pwd(data);
 	set_old(data);
 	free(path);
