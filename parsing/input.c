@@ -6,7 +6,7 @@
 /*   By: sabras <sabras@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/29 19:56:48 by sabras            #+#    #+#             */
-/*   Updated: 2024/09/10 12:57:01 by sabras           ###   ########.fr       */
+/*   Updated: 2024/09/10 14:45:30 by sabras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,7 @@ static char	*handle_variables(t_data *data, char *input)
 
 static int	find_cmd_data(t_data *data, t_cmd *cmd, t_token *token, int *err)
 {
-	if (check_redir(token->content))
+	if (token->type >= FILE_IN)
 		token = token->next->next;
 	if (!token)
 		return (0);
@@ -75,9 +75,9 @@ static int	find_cmd_data(t_data *data, t_cmd *cmd, t_token *token, int *err)
 		return (*err = 1, 0);
 	set_cmd_data(data, cmd, token->content);
 	token = token->next;
-	while (token && token->content[0] != '|')
+	while (token && token->type != PIPE)
 	{
-		if (check_redir(token->content))
+		if (token->type >= FILE_IN)
 			token = token->next;
 		else
 			add_arg(data, cmd, token->content);
@@ -89,15 +89,13 @@ static int	find_cmd_data(t_data *data, t_cmd *cmd, t_token *token, int *err)
 static int	find_file(t_data *data, t_cmd *cmd, t_token *token, int *err)
 {
 	char	*content;
-	int		redir;
 
-	redir = check_redir(token->content);
-	if (!redir)
+	if (token->type < FILE_IN)
 		return (0);
 	content = token->next->content;
-	if (redir == FILE_IN && access(content, F_OK) != 0)
+	if (token->type == FILE_IN && access(content, F_OK) != 0)
 		return (*err = 1, cmd_error(content, NULL,
 				"No such file or directory"), 0);
-	add_file(data, cmd, content, redir);
+	add_file(data, cmd, content, token->type);
 	return (1);
 }
