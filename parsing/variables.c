@@ -1,20 +1,46 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   input_utils.c                                      :+:      :+:    :+:   */
+/*   variables.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: sabras <sabras@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/08/30 20:57:35 by sabras            #+#    #+#             */
-/*   Updated: 2024/09/10 22:25:05 by sabras           ###   ########.fr       */
+/*   Created: 2024/09/11 11:11:20 by sabras            #+#    #+#             */
+/*   Updated: 2024/09/11 11:12:21 by sabras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
+static char	*insert_value(t_data *data, t_parse *p);
+static char	*insert_code(t_data *data, t_parse *p);
+static char	*insert_home(t_data *data, t_parse *p);
 static char	*get_variable(char *content);
 
-char	*insert_value(t_data *data, t_parse *p)
+char	*handle_variables(t_data *data, char *input)
+{
+	t_parse	p;
+
+	if (!ft_strchr(input, '$') && !ft_strchr(input, '~'))
+		return (input);
+	p = init_parse(data, input);
+	while (input[p.i])
+	{
+		if (input[p.i] == '$' && check_key(input[p.i + 1]) && p.quote != '\'')
+			p.parsed = insert_value(data, &p);
+		else if (input[p.i] == '$' && input[p.i + 1] == '?' && p.quote != '\'')
+			p.parsed = insert_code(data, &p);
+		else if (input[p.i] == '~' && check_tilde(input[p.i + 1]) && !p.quote)
+			p.parsed = insert_home(data, &p);
+		else
+			p.parsed[p.j++] = input[p.i];
+		p.quote = toggle_quote(input[p.i++], p.quote);
+	}
+	p.parsed[p.j] = '\0';
+	return (p.parsed);
+}
+
+static char	*insert_value(t_data *data, t_parse *p)
 {
 	char	*variable;
 	char	*value;
@@ -39,7 +65,7 @@ char	*insert_value(t_data *data, t_parse *p)
 	return (free(variable), p->parsed);
 }
 
-char	*insert_code(t_data *data, t_parse *p)
+static char	*insert_code(t_data *data, t_parse *p)
 {
 	char	*code;
 	int		diff;
@@ -61,7 +87,7 @@ char	*insert_code(t_data *data, t_parse *p)
 	return (free(code), p->parsed);
 }
 
-char	*insert_home(t_data *data, t_parse *p)
+static char	*insert_home(t_data *data, t_parse *p)
 {
 	char	*home;
 	int		diff;
