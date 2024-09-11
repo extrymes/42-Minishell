@@ -6,7 +6,7 @@
 /*   By: sabras <sabras@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/24 11:33:32 by sabras            #+#    #+#             */
-/*   Updated: 2024/09/10 13:01:28 by sabras           ###   ########.fr       */
+/*   Updated: 2024/09/11 14:59:51 by sabras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,17 @@ void	cmd_error(char *cmd, char *arg, char *err)
 	}
 	ft_putstr_fd(err, 2);
 	ft_putstr_fd("\n", 2);
+}
+
+char	*get_error(t_data *data, char *content, char *err)
+{
+	char	*error;
+
+	error = strjoin_free(strjoin_free(strjoin_free(ft_strjoin("minishell: ",
+						content), ": ", 0), err, 0), "\n", 0);
+	if (!error)
+		throw_error(data, "malloc failure");
+	return (error);
 }
 
 void	throw_error(t_data *data, char *err)

@@ -6,7 +6,7 @@
 /*   By: sabras <sabras@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/08 22:24:34 by sabras            #+#    #+#             */
-/*   Updated: 2024/09/10 13:02:12 by sabras           ###   ########.fr       */
+/*   Updated: 2024/09/11 16:06:02 by sabras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ char	*get_cmd_name(t_data *data, char *path)
 	return (free(tab), name);
 }
 
-int	check_command(t_data *data, char *content)
+int	check_command(t_data *data, char *content, char **err)
 {
 	struct stat	statbuf;
 	char		*path;
@@ -68,20 +68,20 @@ int	check_command(t_data *data, char *content)
 	if (path)
 		return (free(path), 1);
 	if (!ft_strcmp(content, "."))
-		return (cmd_error(content, NULL, "filename argument required"), 0);
+		return (*err = get_error(data, content, "filename argument required"), 0);
 	if (ft_strchr(content, '/'))
 	{
 		if (access(content, F_OK) != 0)
-			return (cmd_error(content, NULL, "No such file or directory"), 0);
+			return (*err = get_error(data, content, "No such file or directory"), 0);
 		if (access(content, X_OK) != 0)
-			return (cmd_error(content, NULL, "Permission denied"), 0);
+			return (*err = get_error(data, content, "Permission denied"), 0);
 		if (stat(content, &statbuf) != 0)
 			throw_error(data, "stat failure");
 		if (!S_ISREG(statbuf.st_mode))
-			return (cmd_error(content, NULL, "Is a directory"), 0);
+			return (*err = get_error(data, content, "Is a directory"), 0);
 		return (1);
 	}
 	else
-		cmd_error(content, NULL, "command not found");
+		*err = get_error(data, content, "command not found");
 	return (0);
 }
