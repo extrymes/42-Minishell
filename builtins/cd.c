@@ -6,7 +6,7 @@
 /*   By: sabras <sabras@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/29 13:59:47 by msimao            #+#    #+#             */
-/*   Updated: 2024/09/10 12:12:55 by sabras           ###   ########.fr       */
+/*   Updated: 2024/09/11 13:54:10 by sabras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,8 +108,12 @@ void	ft_cd(t_cmd *cmd, t_data *data)
 	if (!path)
 		return ;
 	if (chdir(path) == -1)
+	{
+		data->exit_code = 1;
 		return (cmd_error(cmd->name, path, "No such file or directory"));
+	}
 	set_pwd(data);
 	set_old(data);
 	free(path);
+	data->exit_code = 0;
 }

@@ -6,13 +6,13 @@
 /*   By: sabras <sabras@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/06 15:09:29 by sabras            #+#    #+#             */
-/*   Updated: 2024/09/07 01:15:19 by sabras           ###   ########.fr       */
+/*   Updated: 2024/09/11 13:37:03 by sabras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-void	ft_echo(t_cmd *cmd)
+void	ft_echo(t_data *data, t_cmd *cmd)
 {
 	int		is_n;
 	t_arg	*tmp;
@@ -36,4 +36,5 @@ void	ft_echo(t_cmd *cmd)
 	}
 	if (is_n != 1)
 		ft_putchar_fd('\n', STDOUT_FILENO);
+	data->exit_code = 0;
 }

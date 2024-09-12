@@ -6,7 +6,7 @@
 /*   By: sabras <sabras@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/03 16:42:42 by msimao            #+#    #+#             */
-/*   Updated: 2024/09/09 09:01:26 by sabras           ###   ########.fr       */
+/*   Updated: 2024/09/11 16:29:37 by sabras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,12 +18,12 @@ int	is_var_exists(char **env, char *str)
 	int	j;
 
 	j = 0;
-	while (str[j] != '=')
+	while (str[j] && str[j] != '=')
 		j++;
 	i = 0;
 	while (env[i])
 	{
-		if (ft_strncmp(str, env[i], j + 1) == 0)
+		if (ft_strncmp(str, env[i], j) == 0) // probleme =
 			return (i);
 		i++;
 	}
@@ -51,4 +51,20 @@ char	**copy_tab(t_data *data)
 	}
 	envp[i] = NULL;
 	return (envp);
+}
+
+int	check_arg(char *str)
+{
+	int	i;
+
+	i = 0;
+	if (ft_isdigit(str[i]))
+		return (0);
+	while(str[i] && str[i] != '=')
+	{
+		if (!check_key(str[i]))
+			return (0);
+		i++;
+	}
+	return (1);
 }

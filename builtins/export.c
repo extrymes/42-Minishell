@@ -6,7 +6,7 @@
 /*   By: sabras <sabras@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/29 15:09:32 by msimao            #+#    #+#             */
-/*   Updated: 2024/09/06 15:19:04 by sabras           ###   ########.fr       */
+/*   Updated: 2024/09/11 16:20:22 by sabras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,6 +67,8 @@ static void	modif_var(t_arg *arg, t_data *data)
 {
 	int	i;
 
+	if (!strchr(arg->data, '='))
+		return ;
 	i = is_var_exists(data->env, arg->data);
 	free(data->env[i]);
 	data->env[i] = ft_strdup(arg->data);
@@ -93,8 +95,6 @@ void	ft_export(t_cmd *cmd, t_data *data)
 	t_arg	*tmp;
 
 	tmp = cmd->arg_lst;
-	if (data->entry->cmd_count != 1)
-		return ;
 	if (cmd->arg_count == 0)
 	{
 		envp = sort_env(data);
@@ -102,14 +102,25 @@ void	ft_export(t_cmd *cmd, t_data *data)
 			return ;
 		print_env(envp);
 		free_split(envp);
+		data->exit_code = 0;
 		return ;
 	}
-	while (tmp && ft_strchr(tmp->data, '='))
+	while (tmp)
 	{
-		if (is_var_exists(data->env, tmp->data) == 0)
-			add_var(tmp, data);
+		if (!check_arg(tmp->data))
+		{
+			data->exit_code = 1;
+			cmd_error(cmd->name, tmp->data, "not a valid identifier");
+		}
 		else
-			modif_var(tmp, data);
+		{
+			if (is_var_exists(data->env, tmp->data) == 0)
+				add_var(tmp, data);
+			else
+				modif_var(tmp, data);
+		}
 		tmp = tmp->next;
 	}
+	if (data->exit_code != 1)
+		data->exit_code = 0;
 }
