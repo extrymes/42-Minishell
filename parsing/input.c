@@ -52,10 +52,10 @@ static void	find_cmd(t_data *data, t_cmd *cmd, t_token *token)
 	token = token->next;
 	while (token && token->type != PIPE)
 	{
-		if (token->type >= FILE_IN)
-			token = token->next;
-		else
+		if (token->type == WORD)
 			add_arg(data, cmd, token->content);
+		else
+			token = token->next;
 		token = token->next;
 	}
 	return ;
