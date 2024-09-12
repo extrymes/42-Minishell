@@ -6,16 +6,16 @@
 /*   By: sabras <sabras@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/11 11:11:20 by sabras            #+#    #+#             */
-/*   Updated: 2024/09/11 11:12:21 by sabras           ###   ########.fr       */
+/*   Updated: 2024/09/12 07:54:08 by sabras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static char	*insert_value(t_data *data, t_parse *p);
+static char	*insert_value(t_data *data, t_parse *p, char *input);
 static char	*insert_code(t_data *data, t_parse *p);
 static char	*insert_home(t_data *data, t_parse *p);
-static char	*get_variable(char *content);
+static char	*get_variable(char *input);
 
 char	*handle_variables(t_data *data, char *input)
 {
@@ -27,7 +27,7 @@ char	*handle_variables(t_data *data, char *input)
 	while (input[p.i])
 	{
 		if (input[p.i] == '$' && check_key(input[p.i + 1]) && p.quote != '\'')
-			p.parsed = insert_value(data, &p);
+			p.parsed = insert_value(data, &p, input + p.i + 1);
 		else if (input[p.i] == '$' && input[p.i + 1] == '?' && p.quote != '\'')
 			p.parsed = insert_code(data, &p);
 		else if (input[p.i] == '~' && check_tilde(input[p.i + 1]) && !p.quote)
@@ -37,16 +37,16 @@ char	*handle_variables(t_data *data, char *input)
 		p.quote = toggle_quote(input[p.i++], p.quote);
 	}
 	p.parsed[p.j] = '\0';
-	return (p.parsed);
+	return (free(input), p.parsed);
 }
 
-static char	*insert_value(t_data *data, t_parse *p)
+static char	*insert_value(t_data *data, t_parse *p, char *input)
 {
 	char	*variable;
 	char	*value;
 	int		diff;
 
-	variable = get_variable(p->input + p->i + 1);
+	variable = get_variable(input);
 	if (!variable)
 		return (free(p->parsed), throw_error(data, "malloc failure"), NULL);
 	value = ft_getenv(variable, data->env);
@@ -109,21 +109,21 @@ static char	*insert_home(t_data *data, t_parse *p)
 	return (p->parsed);
 }
 
-static char	*get_variable(char *content)
+static char	*get_variable(char *input)
 {
 	char	*variable;
 	int		i;
 	int		j;
 
 	i = 0;
-	while (content[i] && check_key(content[i]))
+	while (input[i] && check_key(input[i]))
 		i++;
 	variable = malloc((i + 1) * sizeof(char));
 	if (!variable)
 		return (NULL);
 	j = -1;
 	while (++j < i)
-		variable[j] = content[j];
+		variable[j] = input[j];
 	variable[j] = '\0';
 	return (variable);
 }
