@@ -47,7 +47,7 @@ static void	find_cmd(t_data *data, t_cmd *cmd, t_token *token)
 
 	while (token && token->type >= FILE_IN)
 		token = token->next->next;
-	if (!token)
+	if (!token || token->type == PIPE)
 		return ;
 	if (!check_command(data, token->content, &err))
 		cmd->err = err;
