@@ -23,6 +23,8 @@ int	main(int ac, char **av, char **env)
 	{
 		data.entry = init_entry(&data);
 		data.entry->input = readline(data.entry->prompt);
+		if (!data.entry->input)
+			return (clear_data(&data), 0);
 		if (ft_strlen(data.entry->input) > 0)
 		{
 			add_history(data.entry->input);
