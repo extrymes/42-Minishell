@@ -30,7 +30,7 @@ void	parse_input(t_data *data, t_entry *entry)
 	{
 		if (!cmd->name)
 			find_cmd(data, cmd, token);
-		if (token->content[0] == '|')
+		if (token->type == PIPE)
 			cmd = init_cmd(data);
 		if (find_file(data, cmd, token))
 			token = token->next;
