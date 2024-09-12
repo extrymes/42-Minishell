@@ -6,15 +6,15 @@
 /*   By: sabras <sabras@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/29 19:56:48 by sabras            #+#    #+#             */
-/*   Updated: 2024/09/12 12:06:52 by sabras           ###   ########.fr       */
+/*   Updated: 2024/09/12 14:03:08 by sabras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static void	find_cmd(t_data *data, t_cmd *cmd, t_token *token);
-static int	find_file(t_data *data, t_cmd *cmd, t_token *token, int i);
-static void	handle_heredoc(t_data *data, t_cmd *cmd, t_token *token, int i);
+static t_cmd	*find_cmd(t_data *data, t_token *token);
+static int		find_file(t_data *data, t_cmd *cmd, t_token *token, int i);
+static void		*handle_heredoc(t_data *data, t_cmd *cmd, t_token *token, int i);
 
 void	parse_input(t_data *data, t_entry *entry)
 {
@@ -27,28 +27,30 @@ void	parse_input(t_data *data, t_entry *entry)
 	if (!check_syntax(entry->token_lst))
 		return ;
 	token = entry->token_lst;
-	cmd = init_cmd(data);
+	cmd = NULL;
 	i = 0;
 	while (token)
 	{
-		if (!cmd->name)
-			find_cmd(data, cmd, token);
-		if (token->type == PIPE && ++i)
-			cmd = init_cmd(data);
-		if (find_file(data, cmd, token, i))
+		if (!cmd)
+			cmd = find_cmd(data, token);
+		if (token->type >= FILE_IN && find_file(data, cmd, token, i))
 			token = token->next;
+		if (token->type == PIPE && ++i)
+			cmd = NULL;
 		token = token->next;
 	}
 }
 
-static void	find_cmd(t_data *data, t_cmd *cmd, t_token *token)
+static t_cmd	*find_cmd(t_data *data, t_token *token)
 {
+	t_cmd	*cmd;
 	char	*err;
 
+	cmd = init_cmd(data);
 	while (token && token->type >= FILE_IN)
 		token = token->next->next;
 	if (!token || token->type == PIPE)
-		return ;
+		return (cmd);
 	if (!check_command(data, token->content, &err))
 		cmd->err = err;
 	set_cmd_data(data, cmd, token->content);
@@ -61,13 +63,11 @@ static void	find_cmd(t_data *data, t_cmd *cmd, t_token *token)
 			token = token->next;
 		token = token->next;
 	}
-	return ;
+	return (cmd);
 }
 
 static int	find_file(t_data *data, t_cmd *cmd, t_token *token, int i)
 {
-	if (token->type < FILE_IN)
-		return (0);
 	if (token->type == HERE_DOC)
 		handle_heredoc(data, cmd, token, i);
 	else
@@ -75,7 +75,7 @@ static int	find_file(t_data *data, t_cmd *cmd, t_token *token, int i)
 	return (1);
 }
 
-static void	handle_heredoc(t_data *data, t_cmd *cmd, t_token *token, int i)
+static void	*handle_heredoc(t_data *data, t_cmd *cmd, t_token *token, int i)
 {
 	char	*filename;
 	char	*delimiter;
@@ -99,7 +99,7 @@ static void	handle_heredoc(t_data *data, t_cmd *cmd, t_token *token, int i)
 		ft_putstr_fd("\n", fd);
 		free(line);
 	}
-	close(fd);
 	signal(SIGINT, sigint_handler_nonl);
 	add_file(data, cmd, filename, token->type);
+	return (free(filename), close(fd), NULL);
 }
