@@ -6,7 +6,7 @@
 /*   By: sabras <sabras@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/29 14:36:25 by msimao            #+#    #+#             */
-/*   Updated: 2024/09/10 16:14:45 by sabras           ###   ########.fr       */
+/*   Updated: 2024/09/11 13:36:04 by sabras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,20 +51,19 @@ int	child(t_data *data, t_pipex *pipex, int i)
 	{
 		dup2(pipex->tube[1], STDOUT_FILENO);
 		cmd = get_cmd_by_id(data->entry->cmd_lst, i);
-		set_file(cmd->file_lst, pipex);
 		free(pipex->pid);
 		close(pipex->tube[0]);
 		close(pipex->tube[1]);
 		close(data->stdout_fd);
 		close(data->stdin_fd);
+		if (!set_file(cmd->file_lst, pipex) || cmd->err != NULL)
+			error_exec(data, cmd->err);
 		if (cmd->path == NULL)
 			builtins(cmd, data, 1);
 		ft_exec(cmd, data);
 	}
 	dup2(pipex->tube[0], STDIN_FILENO);
-	close(pipex->tube[1]);
-	close(pipex->tube[0]);
-	return (1);
+	return (close(pipex->tube[1]), close(pipex->tube[0]), 1);
 }
 
 int	parent(t_data *data, t_pipex *pipex, int i)
@@ -80,7 +79,8 @@ int	parent(t_data *data, t_pipex *pipex, int i)
 		close(data->stdout_fd);
 		close(data->stdin_fd);
 		cmd = get_cmd_by_id(data->entry->cmd_lst, i);
-		set_file(cmd->file_lst, pipex);
+		if (!set_file(cmd->file_lst, pipex) || cmd->err != NULL)
+			error_exec(data, cmd->err);
 		if (cmd->path == NULL)
 			builtins(cmd, data, 1);
 		ft_exec(cmd, data);
@@ -102,7 +102,6 @@ void	multi_cmd(t_data *data, t_pipex *pipex)
 	if (!parent(data, pipex, i))
 		return (free(pipex->pid), error_exec(data, "malloc failure"));
 	stop_process(data, pipex);
-	free(pipex->pid);
 }
 
 void	pipex(t_data *data)
