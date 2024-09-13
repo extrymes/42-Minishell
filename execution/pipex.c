@@ -113,6 +113,7 @@ void	pipex(t_data *data)
 	pipex.pid = malloc(sizeof(pid_t) * data->entry->cmd_count);
 	if (!pipex.pid)
 		return (error_exec(data, "malloc failure"));
+	handle_signals(1);
 	if (data->entry->cmd_count == 1)
 		one_cmd(data, &pipex);
 	else
@@ -122,6 +123,7 @@ void	pipex(t_data *data)
 		ft_close(pipex.tube[1]);
 	}
 	reset_std(data);
+	handle_signals(0);
 	if (pipex.pid)
 		free(pipex.pid);
 	return ;
