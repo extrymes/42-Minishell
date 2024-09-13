@@ -6,7 +6,7 @@
 /*   By: sabras <sabras@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/24 09:33:49 by sabras            #+#    #+#             */
-/*   Updated: 2024/09/13 20:28:43 by sabras           ###   ########.fr       */
+/*   Updated: 2024/09/13 21:49:07 by sabras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ int	main(int ac, char **av, char **env)
 		{
 			add_history(data.entry->input);
 			parse_input(&data, data.entry);
-			pipex(&data);
+			exec_data(&data);
 		}
 		if (g_signal_received)
 			data.exit_code = 128 + g_signal_received;
