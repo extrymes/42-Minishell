@@ -6,7 +6,7 @@
 /*   By: sabras <sabras@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/26 09:58:23 by sabras            #+#    #+#             */
-/*   Updated: 2024/09/10 14:38:03 by sabras           ###   ########.fr       */
+/*   Updated: 2024/09/13 21:52:07 by sabras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,5 +49,5 @@ void	clear_data(t_data *data)
 	close(data->stdin_fd);
 	close(data->stdout_fd);
 	clear_entry(data->entry);
-	clear_history();
+	rl_clear_history();
 }
