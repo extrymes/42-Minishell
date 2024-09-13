@@ -6,7 +6,7 @@
 /*   By: sabras <sabras@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/24 09:33:49 by sabras            #+#    #+#             */
-/*   Updated: 2024/09/10 13:35:20 by sabras           ###   ########.fr       */
+/*   Updated: 2024/09/13 12:01:49 by sabras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ int	main(int ac, char **av, char **env)
 		data.entry = init_entry(&data);
 		data.entry->input = readline(data.entry->prompt);
 		if (!data.entry->input)
-			return (clear_data(&data), 0);
+			ft_exit(NULL, &data);
 		if (ft_strlen(data.entry->input) > 0)
 		{
 			add_history(data.entry->input);
