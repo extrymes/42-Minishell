@@ -6,7 +6,7 @@
 /*   By: sabras <sabras@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/29 14:37:15 by msimao            #+#    #+#             */
-/*   Updated: 2024/09/11 14:59:37 by sabras           ###   ########.fr       */
+/*   Updated: 2024/09/13 14:30:29 by sabras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ void	stop_process(t_data *data, t_pipex *pipex)
 
 void	one_cmd(t_data *data, t_pipex *pipex)
 {
-	if (!set_file(data->entry->cmd_lst->file_lst, pipex)
+	if (!set_file(data->entry->cmd_lst->file_lst, pipex, data)
 		|| data->entry->cmd_lst->err != NULL)
 		return (ft_putstr_fd(data->entry->cmd_lst->err, 2));
 	if (data->entry->cmd_lst->path == NULL)

@@ -6,7 +6,7 @@
 /*   By: sabras <sabras@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/29 14:36:25 by msimao            #+#    #+#             */
-/*   Updated: 2024/09/11 13:36:04 by sabras           ###   ########.fr       */
+/*   Updated: 2024/09/13 19:52:25 by sabras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ int	child(t_data *data, t_pipex *pipex, int i)
 		close(pipex->tube[1]);
 		close(data->stdout_fd);
 		close(data->stdin_fd);
-		if (!set_file(cmd->file_lst, pipex) || cmd->err != NULL)
+		if (!set_file(cmd->file_lst, pipex, data) || cmd->err != NULL)
 			error_exec(data, cmd->err);
 		if (cmd->path == NULL)
 			builtins(cmd, data, 1);
@@ -79,7 +79,7 @@ int	parent(t_data *data, t_pipex *pipex, int i)
 		close(data->stdout_fd);
 		close(data->stdin_fd);
 		cmd = get_cmd_by_id(data->entry->cmd_lst, i);
-		if (!set_file(cmd->file_lst, pipex) || cmd->err != NULL)
+		if (!set_file(cmd->file_lst, pipex, data) || cmd->err != NULL)
 			error_exec(data, cmd->err);
 		if (cmd->path == NULL)
 			builtins(cmd, data, 1);
@@ -104,7 +104,7 @@ void	multi_cmd(t_data *data, t_pipex *pipex)
 	stop_process(data, pipex);
 }
 
-void	pipex(t_data *data)
+void	exec_data(t_data *data)
 {
 	t_pipex	pipex;
 

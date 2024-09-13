@@ -6,31 +6,28 @@
 /*   By: sabras <sabras@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 11:11:47 by msimao            #+#    #+#             */
-/*   Updated: 2024/09/11 13:52:46 by sabras           ###   ########.fr       */
+/*   Updated: 2024/09/12 14:34:37 by sabras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-int	set_infile(t_file *file)
+int	set_infile(t_file *file, t_pipex *pipex)
 {
-	int		infile;
 	t_file	*tmp;
 
+	pipex->infile = 0;
 	tmp = file;
 	if (access(tmp->name, F_OK) != 0)
-		return (cmd_error(tmp->name, NULL, "No such file or directory"), -1);
-	infile = open(tmp->name, O_RDONLY);
-	if (infile < 0)
-		return (cmd_error(tmp->name, NULL, "Permission denied"), -1);
-	tmp = tmp->next;
-	while (tmp)
-	{
-		if (tmp->redir == FILE_IN)
-			return (close(infile), 0);
-		tmp = tmp->next;
-	}
-	return (infile);
+		return (cmd_error(tmp->name, NULL, "No such file or directory"), 1);
+	pipex->infile = open(tmp->name, O_RDONLY);
+	if (pipex->infile < 0)
+		return (cmd_error(tmp->name, NULL, "Permission denied"), 1);
+	if (pipex->infile != 0)
+		dup2(pipex->infile, STDIN_FILENO);
+	if (tmp->redir == FILE_IN)
+		ft_close(pipex->infile);
+	return (0);
 }
 
 int	set_outfile(t_file *file)
@@ -39,44 +36,56 @@ int	set_outfile(t_file *file)
 	t_file	*tmp;
 
 	tmp = file;
+	outfile = 0;
 	if (tmp->redir == FILE_OUT)
 		outfile = open(tmp->name, O_TRUNC | O_CREAT | O_RDWR, 0644);
 	else
 		outfile = open(tmp->name, O_APPEND | O_CREAT | O_RDWR, 0644);
 	if (outfile < 0)
-		return (cmd_error(tmp->name, NULL, "Permission denied"), -1);
-	tmp = tmp->next;
-	while (tmp)
+		return (cmd_error(tmp->name, NULL, "Permission denied"), 1);
+	if (outfile != 0)
 	{
-		if (tmp->redir == FILE_OUT || tmp->redir == FILE_OUT_APP)
-			return (close(outfile), 0);
-		tmp = tmp->next;
+		dup2(outfile, STDOUT_FILENO);
+		ft_close(outfile);
 	}
-	return (outfile);
+	return (0);
 }
 
-int	set_file(t_file *file, t_pipex *pipex)
+void	distroy_heredoc(t_file *file, t_pipex *pipex)
 {
 	t_file	*tmp;
 
 	tmp = file;
-	pipex->infile = 0;
-	pipex->outfile = 0;
 	while (tmp)
 	{
-		if (tmp->redir == FILE_IN)
-			pipex->infile = set_infile(tmp);
-		else if (tmp->redir == FILE_OUT || tmp->redir == FILE_OUT_APP)
-			pipex->outfile = set_outfile(tmp);
-		if (pipex->infile < 0 || pipex->outfile < 0)
-			return (0);
+		if (tmp->redir == HERE_DOC)
+		{
+			unlink(tmp->name);
+			ft_close(pipex->infile);
+		}
 		tmp = tmp->next;
 	}
-	if (pipex->infile != 0)
-		dup2(pipex->infile, STDIN_FILENO);
-	if (pipex->outfile != 0)
-		dup2(pipex->outfile, STDOUT_FILENO);
-	ft_close(pipex->infile);
-	ft_close(pipex->outfile);
+}
+
+int	set_file(t_file *file, t_pipex *pipex, t_data *data)
+{
+	t_file	*tmp;
+	int		infile;
+	int		outfile;
+
+	tmp = file;
+	infile = 0;
+	outfile = 0;
+	while (tmp)
+	{
+		if (tmp->redir == FILE_IN || tmp->redir == HERE_DOC)
+			infile = set_infile(tmp, pipex);
+		else if (tmp->redir == FILE_OUT || tmp->redir == FILE_OUT_APP)
+			outfile = set_outfile(tmp);
+		if (infile > 0 || outfile > 0)
+			return (data->exit_code = 1, 0);
+		tmp = tmp->next;
+	}
+	distroy_heredoc(file, pipex);
 	return (1);
 }
