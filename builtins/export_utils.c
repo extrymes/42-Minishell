@@ -6,7 +6,7 @@
 /*   By: sabras <sabras@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/03 16:42:42 by msimao            #+#    #+#             */
-/*   Updated: 2024/09/11 16:29:37 by sabras           ###   ########.fr       */
+/*   Updated: 2024/09/13 09:51:47 by sabras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,8 +23,11 @@ int	is_var_exists(char **env, char *str)
 	i = 0;
 	while (env[i])
 	{
-		if (ft_strncmp(str, env[i], j) == 0) // probleme =
-			return (i);
+		if (ft_strncmp(str, env[i], j) == 0)
+		{
+			if (env[i][j] == '\0' || env[i][j] == '=')
+				return (i);
+		}
 		i++;
 	}
 	return (0);
@@ -60,11 +63,50 @@ int	check_arg(char *str)
 	i = 0;
 	if (ft_isdigit(str[i]))
 		return (0);
-	while(str[i] && str[i] != '=')
+	while (str[i] && str[i] != '=')
 	{
 		if (!check_key(str[i]))
 			return (0);
 		i++;
 	}
 	return (1);
+}
+
+char	*copy_to(char *env, char c, char start)
+{
+	int		i;
+	int		j;
+	char	*str;
+
+	i = 0;
+	j = 0;
+	if (start == '=')
+	{
+		while (env[j] != start)
+			j++;
+		j++;
+	}
+	while (env[j + i] && env[j + i] != c)
+		i++;
+	str = malloc(sizeof(char) * (i + 1));
+	if (!str)
+		return (NULL);
+	i = 0;
+	while (env[j + i] && env[j + i] != c)
+	{
+		str[i] = env[j + i];
+		i++;
+	}
+	str[i] = '\0';
+	return (str);
+}
+
+void	print_x(char *str, int a)
+{
+	ft_putstr_fd("declare -x ", STDOUT_FILENO);
+	ft_putstr_fd(str, STDOUT_FILENO);
+	if (a == 1)
+		ft_putstr_fd("\"\n", STDOUT_FILENO);
+	else
+		ft_putstr_fd("\n", STDOUT_FILENO);
 }

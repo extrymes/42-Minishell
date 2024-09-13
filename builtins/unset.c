@@ -6,7 +6,7 @@
 /*   By: sabras <sabras@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/29 15:08:55 by msimao            #+#    #+#             */
-/*   Updated: 2024/09/11 16:06:51 by sabras           ###   ########.fr       */
+/*   Updated: 2024/09/12 15:15:01 by sabras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,16 +37,13 @@ static char	**new_env(t_arg *arg, char **env)
 	return (envp[j + 1] = NULL, envp);
 }
 
-void	ft_unset(t_cmd *cmd, t_data *data)
+void	*ft_unset(t_cmd *cmd, t_data *data)
 {
 	char	**envp;
 	t_arg	*tmp;
 
 	if (cmd->arg_count <= 0)
-	{
-		data->exit_code = 0;
-		return ;
-	}
+		return (data->exit_code = 0, NULL);
 	tmp = cmd->arg_lst;
 	while (tmp)
 	{
@@ -58,11 +55,11 @@ void	ft_unset(t_cmd *cmd, t_data *data)
 		}
 		envp = new_env(tmp, data->env);
 		if (!envp)
-			return ;
+			return (NULL);
 		free_split(data->env);
 		read_env(data, envp);
 		free_split(envp);
 		tmp = tmp->next;
 	}
-	data->exit_code = 0;
+	return (data->exit_code = 0, NULL);
 }

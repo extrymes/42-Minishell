@@ -6,7 +6,7 @@
 /*   By: sabras <sabras@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/29 14:58:53 by msimao            #+#    #+#             */
-/*   Updated: 2024/09/11 13:28:48 by sabras           ###   ########.fr       */
+/*   Updated: 2024/09/12 09:19:50 by sabras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,12 +18,12 @@ void	ft_exit(t_cmd *cmd, t_data *data)
 
 	i = -1;
 	ft_putstr_fd("exit\n", STDOUT_FILENO);
-	if (cmd->arg_count > 1)
+	if (cmd && cmd->arg_count > 1)
 	{
 		data->exit_code = 127;
 		return (cmd_error(cmd->name, NULL, "too many arguments"));
 	}
-	if (cmd->arg_count == 1)
+	if (cmd && cmd->arg_count == 1)
 	{
 		while (cmd->arg_lst->data[++i])
 		{
