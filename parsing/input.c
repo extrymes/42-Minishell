@@ -92,6 +92,8 @@ static void	*handle_heredoc(t_data *data, t_cmd *cmd, t_token *token, int i)
 	while (1)
 	{
 		line = readline(CYAN "> " RESET);
+		if (!line)
+			heredoc_warning(delimiter);
 		if (!line || !ft_strcmp(line, delimiter))
 			break ;
 		line = handle_variables(data, line);

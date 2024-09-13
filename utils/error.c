@@ -34,6 +34,14 @@ void	cmd_error(char *cmd, char *arg, char *err)
 	ft_putstr_fd("\n", 2);
 }
 
+void	heredoc_warning(char *delimiter)
+{
+	ft_putstr_fd("minishell: warning: here-document delimited ", 2);
+	ft_putstr_fd("by end-of-file (wanted `", 2);
+	ft_putstr_fd(delimiter, 2);
+	ft_putstr_fd("')\n", 2);
+}
+
 char	*get_error(t_data *data, char *content, char *err, int code)
 {
 	char	*error;
