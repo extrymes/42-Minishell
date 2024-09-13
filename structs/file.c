@@ -6,31 +6,31 @@
 /*   By: sabras <sabras@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 10:25:06 by sabras            #+#    #+#             */
-/*   Updated: 2024/09/10 13:08:28 by sabras           ###   ########.fr       */
+/*   Updated: 2024/09/13 15:14:03 by sabras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-t_file	*init_file(t_data *data, char *content, int redir)
+t_file	*init_file(t_data *data, char *filename, int redir)
 {
 	t_file	*file;
 
 	file = malloc(sizeof(t_file));
 	if (!file)
 		throw_error(data, "malloc failure");
-	file->name = alloc_str(data, content);
+	file->name = filename;
 	file->redir = redir;
 	file->next = NULL;
 	return (file);
 }
 
-void	add_file(t_data *data, t_cmd *cmd, char *content, int redir)
+void	add_file(t_data *data, t_cmd *cmd, char *filename, int redir)
 {
 	t_file	*file;
 	t_file	*tmp;
 
-	file = init_file(data, content, redir);
+	file = init_file(data, filename, redir);
 	if (!cmd->file_lst)
 		cmd->file_lst = file;
 	else

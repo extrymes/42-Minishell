@@ -6,42 +6,47 @@
 /*   By: sabras <sabras@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/29 19:56:48 by sabras            #+#    #+#             */
-/*   Updated: 2024/09/12 14:03:08 by sabras           ###   ########.fr       */
+/*   Updated: 2024/09/13 21:31:50 by sabras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static t_cmd	*find_cmd(t_data *data, t_token *token);
-static int		find_file(t_data *data, t_cmd *cmd, t_token *token, int i);
-static void		*handle_heredoc(t_data *data, t_cmd *cmd, t_token *token, int i);
+extern int	g_signal_received;
 
-void	parse_input(t_data *data, t_entry *entry)
+static t_cmd	*get_cmd(t_data *data, t_token *token);
+static int		handle_redir(t_data *data, t_cmd *cmd, t_token *token, int *id);
+static int		handle_heredoc(t_data *data, t_token *token, int fd);
+
+void	*parse_input(t_data *data, t_entry *entry)
 {
 	t_token	*token;
 	t_cmd	*cmd;
-	int		i;
+	int		id;
 
-	entry->input = handle_variables(data, entry->input);
+	entry->input = handle_variables(data, entry->input, 0);
 	tokenize_input(data, entry->input);
 	if (!check_syntax(data, entry->token_lst))
-		return ;
+		return (NULL);
 	token = entry->token_lst;
 	cmd = NULL;
-	i = 0;
+	id = 0;
 	while (token)
 	{
 		if (!cmd)
-			cmd = find_cmd(data, token);
-		if (token->type >= FILE_IN && find_file(data, cmd, token, i))
+			cmd = get_cmd(data, token);
+		if (token->type >= FILE_IN && handle_redir(data, cmd, token, &id))
 			token = token->next;
-		if (token->type == PIPE && ++i)
+		if (token->type == PIPE && ++id)
 			cmd = NULL;
+		if (id == -1)
+			return (entry->cmd_count = 0, NULL);
 		token = token->next;
 	}
+	return (NULL);
 }
 
-static t_cmd	*find_cmd(t_data *data, t_token *token)
+static t_cmd	*get_cmd(t_data *data, t_token *token)
 {
 	t_cmd	*cmd;
 	char	*err;
@@ -66,42 +71,47 @@ static t_cmd	*find_cmd(t_data *data, t_token *token)
 	return (cmd);
 }
 
-static int	find_file(t_data *data, t_cmd *cmd, t_token *token, int i)
+static int	handle_redir(t_data *data, t_cmd *cmd, t_token *token, int *id)
 {
+	char	*filename;
+	int		fd;
+
 	if (token->type == HERE_DOC)
-		handle_heredoc(data, cmd, token, i);
+	{
+		filename = strjoin_free("/tmp/heredoc", ft_itoa(*id), 1);
+		if (!filename)
+			throw_error(data, "malloc failure");
+		fd = open(filename, O_TRUNC | O_CREAT | O_RDWR, 0644);
+		if (fd < 0)
+			return (free(filename), throw_error(data, "open failure"), 0);
+		if (!handle_heredoc(data, token->next, fd))
+			return (free(filename), *id = -1, 0);
+	}
 	else
-		add_file(data, cmd, token->next->content, token->type);
+		filename = alloc_str(data, token->next->content);
+	add_file(data, cmd, filename, token->type);
 	return (1);
 }
 
-static void	*handle_heredoc(t_data *data, t_cmd *cmd, t_token *token, int i)
+static int	handle_heredoc(t_data *data, t_token *delimiter, int fd)
 {
-	char	*filename;
-	char	*delimiter;
 	char	*line;
-	int		fd;
 
-	filename = strjoin_free("/tmp/heredoc", ft_itoa(i), 1);
-	if (!filename)
-		throw_error(data, "malloc failure");
-	delimiter = token->next->content;
-	fd = open(filename, O_TRUNC | O_CREAT | O_RDWR, 0644);
-	if (fd < 0)
-		throw_error(data, "open failure");
 	while (1)
 	{
 		line = readline(CYAN "> " RESET);
-		if (!line)
-			heredoc_warning(delimiter);
-		if (!line || !ft_strcmp(line, delimiter))
+		if (!line || !ft_strcmp(line, delimiter->content))
 			break ;
-		line = handle_variables(data, line);
+		if (g_signal_received)
+			return (close(fd), free(line), 0);
+		line = handle_variables(data, line, delimiter->has_quote + 1);
 		ft_putstr_fd(line, fd);
 		ft_putstr_fd("\n", fd);
 		free(line);
 	}
-	signal(SIGINT, sigint_handler_nonl);
-	add_file(data, cmd, filename, token->type);
-	return (free(filename), close(fd), NULL);
+	if (line)
+		free(line);
+	else
+		heredoc_warning(delimiter->content);
+	return (close(fd), 1);
 }
