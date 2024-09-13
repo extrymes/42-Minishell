@@ -6,7 +6,7 @@
 /*   By: sabras <sabras@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/11 11:11:20 by sabras            #+#    #+#             */
-/*   Updated: 2024/09/12 07:54:08 by sabras           ###   ########.fr       */
+/*   Updated: 2024/09/13 21:27:53 by sabras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,20 +17,23 @@ static char	*insert_code(t_data *data, t_parse *p);
 static char	*insert_home(t_data *data, t_parse *p);
 static char	*get_variable(char *input);
 
-char	*handle_variables(t_data *data, char *input)
+char	*handle_variables(t_data *data, char *input, int heredoc)
 {
 	t_parse	p;
 
-	if (!ft_strchr(input, '$') && !ft_strchr(input, '~'))
+	if ((!ft_strchr(input, '$') && !ft_strchr(input, '~')) || heredoc == 2)
 		return (input);
 	p = init_parse(data, input);
 	while (input[p.i])
 	{
-		if (input[p.i] == '$' && check_key(input[p.i + 1]) && p.quote != '\'')
+		if (input[p.i] == '$' && check_key(input[p.i + 1])
+			&& (p.quote != '\'' || heredoc))
 			p.parsed = insert_value(data, &p, input + p.i + 1);
-		else if (input[p.i] == '$' && input[p.i + 1] == '?' && p.quote != '\'')
+		else if (input[p.i] == '$' && input[p.i + 1] == '?'
+			&& (p.quote != '\'' || heredoc))
 			p.parsed = insert_code(data, &p);
-		else if (input[p.i] == '~' && check_tilde(input[p.i + 1]) && !p.quote)
+		else if (input[p.i] == '~' && check_tilde(input[p.i + 1])
+			&& (!p.quote && !heredoc))
 			p.parsed = insert_home(data, &p);
 		else
 			p.parsed[p.j++] = input[p.i];
