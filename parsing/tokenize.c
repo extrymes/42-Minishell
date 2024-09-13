@@ -6,14 +6,14 @@
 /*   By: sabras <sabras@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/03 11:05:01 by sabras            #+#    #+#             */
-/*   Updated: 2024/09/11 00:52:59 by sabras           ###   ########.fr       */
+/*   Updated: 2024/09/13 21:04:55 by sabras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
 static char	*get_content(t_data *data, char *input);
-static char	*handle_quotes(t_data *data, char *content);
+static char	*handle_quotes(t_data *data, char *content, int *quote);
 static int	count_spaces(char *str);
 static int	count_opt(char *str, char opt);
 
@@ -21,17 +21,19 @@ void	tokenize_input(t_data *data, char *input)
 {
 	char	*content;
 	int		type;
+	int		has_quote;
 	int		i;
 
 	i = count_spaces(input);
 	while (input[i])
 	{
+		has_quote = 1;
 		content = get_content(data, input + i);
 		i += ft_strlen(content);
 		i += count_spaces(input + i);
 		type = get_token_type(content);
-		content = handle_quotes(data, content);
-		add_token(data, data->entry, content, type);
+		content = handle_quotes(data, content, &has_quote);
+		init_token(data, content, type, has_quote);
 	}
 }
 
@@ -58,7 +60,7 @@ static char	*get_content(t_data *data, char *input)
 	return (content);
 }
 
-static char	*handle_quotes(t_data *data, char *content)
+static char	*handle_quotes(t_data *data, char *content, int *has_quote)
 {
 	char	*parsed;
 	char	quote;
@@ -66,7 +68,7 @@ static char	*handle_quotes(t_data *data, char *content)
 	int		j;
 
 	if (!ft_strchr(content, '\'') && !ft_strchr(content, '\"'))
-		return (content);
+		return (*has_quote = 0, content);
 	parsed = malloc((ft_strlen(content) + 1) * sizeof(char));
 	if (!parsed)
 		return (free(content), throw_error(data, "malloc failure"), NULL);
