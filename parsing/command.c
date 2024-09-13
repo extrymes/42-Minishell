@@ -6,7 +6,7 @@
 /*   By: sabras <sabras@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/08 22:24:34 by sabras            #+#    #+#             */
-/*   Updated: 2024/09/11 16:06:02 by sabras           ###   ########.fr       */
+/*   Updated: 2024/09/12 09:10:26 by sabras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,20 +68,20 @@ int	check_command(t_data *data, char *content, char **err)
 	if (path)
 		return (free(path), 1);
 	if (!ft_strcmp(content, "."))
-		return (*err = get_error(data, content, "filename argument required"), 0);
+		return (*err = get_error(data, content, ERR_NARG, 2), 0);
 	if (ft_strchr(content, '/'))
 	{
 		if (access(content, F_OK) != 0)
-			return (*err = get_error(data, content, "No such file or directory"), 0);
+			return (*err = get_error(data, content, ERR_NFILE, 127), 0);
 		if (access(content, X_OK) != 0)
-			return (*err = get_error(data, content, "Permission denied"), 0);
+			return (*err = get_error(data, content, ERR_NPERM, 126), 0);
 		if (stat(content, &statbuf) != 0)
 			throw_error(data, "stat failure");
 		if (!S_ISREG(statbuf.st_mode))
-			return (*err = get_error(data, content, "Is a directory"), 0);
+			return (*err = get_error(data, content, ERR_ISDIR, 126), 0);
 		return (1);
 	}
 	else
-		*err = get_error(data, content, "command not found");
+		*err = get_error(data, content, ERR_NCMD, 127);
 	return (0);
 }

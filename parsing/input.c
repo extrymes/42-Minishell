@@ -24,7 +24,7 @@ void	parse_input(t_data *data, t_entry *entry)
 
 	entry->input = handle_variables(data, entry->input);
 	tokenize_input(data, entry->input);
-	if (!check_syntax(entry->token_lst))
+	if (!check_syntax(data, entry->token_lst))
 		return ;
 	token = entry->token_lst;
 	cmd = NULL;
