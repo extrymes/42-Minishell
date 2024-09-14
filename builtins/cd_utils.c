@@ -1,47 +1,31 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   env.c                                              :+:      :+:    :+:   */
+/*   cd_utils.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: sabras <sabras@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/08/29 14:52:41 by msimao            #+#    #+#             */
-/*   Updated: 2024/09/14 11:05:29 by sabras           ###   ########.fr       */
+/*   Created: 2024/09/14 15:05:44 by sabras            #+#    #+#             */
+/*   Updated: 2024/09/14 15:06:04 by sabras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-static int	is_key(char *str)
+void	set_var(t_data *data, char *path)
 {
-	int	i;
+	char	*tmp;
 
-	i = 0;
-	while (str[i])
+	tmp = ft_strdup(data->pwd);
+	free(data->pwd);
+	data->pwd = getcwd(NULL, 0);
+	if (!data->pwd)
 	{
-		if (str[i] == '=')
-			return (1);
-		i++;
+		ft_putstr_fd("cd: error retrieving current directory: ", 2);
+		ft_putstr_fd("getcwd: cannot access parent directories: ", 2);
+		ft_putstr_fd("No such file or directory\n", 2);
+		data->pwd = ft_strjoin(tmp, "/");
+		data->pwd = strjoin_free(data->pwd, path, 0);
 	}
-	return (0);
-}
-
-void	ft_env(t_data *data, t_cmd *cmd)
-{
-	int	i;
-
-	i = 0;
-	(void)cmd;
-	while (data->env[i])
-	{
-		if (is_key(data->env[i]))
-		{
-			ft_putstr_fd(data->env[i], STDOUT_FILENO);
-			ft_putstr_fd("\n", STDOUT_FILENO);
-			i++;
-		}
-		else
-			i++;
-	}
-	data->exit_code = 0;
+	free(tmp);
 }

@@ -6,7 +6,7 @@
 /*   By: sabras <sabras@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/28 11:23:54 by msimao            #+#    #+#             */
-/*   Updated: 2024/09/11 13:37:42 by sabras           ###   ########.fr       */
+/*   Updated: 2024/09/14 11:02:54 by sabras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ void	builtins(t_cmd *cmd, t_data *data, int in_fork)
 	else if (ft_strncmp(cmd->name, "pwd", 3) == 0)
 		ft_pwd(data);
 	else if (ft_strncmp(cmd->name, "env", 3) == 0)
-		ft_env(data);
+		ft_env(data, cmd);
 	else if (ft_strncmp(cmd->name, "cd", 2) == 0)
 		ft_cd(cmd, data);
 	else if (ft_strncmp(cmd->name, "exit", 4) == 0)

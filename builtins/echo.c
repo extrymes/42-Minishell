@@ -6,11 +6,27 @@
 /*   By: sabras <sabras@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/06 15:09:29 by sabras            #+#    #+#             */
-/*   Updated: 2024/09/11 13:37:03 by sabras           ###   ########.fr       */
+/*   Updated: 2024/09/14 10:57:14 by sabras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
+
+static int	is_flag(char *str)
+{
+	int	i;
+
+	i = 0;
+	if (str[i] != '-')
+		return (0);
+	i++;
+	while (str[i])
+	{
+		if (str[i++] != 'n')
+			return (0);
+	}
+	return (1);
+}
 
 void	ft_echo(t_data *data, t_cmd *cmd)
 {
@@ -21,8 +37,7 @@ void	ft_echo(t_data *data, t_cmd *cmd)
 	tmp = cmd->arg_lst;
 	if (cmd->arg_count == 0)
 		return (ft_putchar_fd('\n', STDOUT_FILENO));
-	if (tmp->data && tmp->data[0] == '-'
-		&& tmp->data[1] == 'n')
+	while (tmp && is_flag(tmp->data))
 	{
 		is_n = 1;
 		tmp = tmp->next;
