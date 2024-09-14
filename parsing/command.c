@@ -6,7 +6,7 @@
 /*   By: sabras <sabras@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/08 22:24:34 by sabras            #+#    #+#             */
-/*   Updated: 2024/09/14 09:31:16 by sabras           ###   ########.fr       */
+/*   Updated: 2024/09/14 09:54:05 by sabras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ char	*get_cmd_path(t_data *data, char *name)
 	char	*joined;
 	int		i;
 
-	if (!is_alpha(name))
+	if (ft_strlen(name) == 0 || !is_alpha(name))
 		return (NULL);
 	path = ft_getenv("PATH", data->env);
 	if (!path)
