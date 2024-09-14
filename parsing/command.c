@@ -6,7 +6,7 @@
 /*   By: sabras <sabras@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/08 22:24:34 by sabras            #+#    #+#             */
-/*   Updated: 2024/09/12 09:10:26 by sabras           ###   ########.fr       */
+/*   Updated: 2024/09/14 09:31:16 by sabras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ int	check_command(t_data *data, char *content, char **err)
 	struct stat	statbuf;
 	char		*path;
 
-	if (ft_strstr(BUILTINS, content))
+	if (is_builtin(data, content))
 		return (1);
 	path = get_cmd_path(data, content);
 	if (path)
@@ -84,4 +84,22 @@ int	check_command(t_data *data, char *content, char **err)
 	else
 		*err = get_error(data, content, ERR_NCMD, 127);
 	return (0);
+}
+
+int	is_builtin(t_data *data, char *content)
+{
+	char	**builtins;
+	int		i;
+
+	builtins = ft_split(BUILTINS, ' ');
+	if (!builtins)
+		throw_error(data, "malloc failure");
+	i = 0;
+	while (builtins[i])
+	{
+		if (!ft_strcmp(content, builtins[i]))
+			return (free_split(builtins), 1);
+		i++;
+	}
+	return (free_split(builtins), 0);
 }

@@ -6,7 +6,7 @@
 /*   By: sabras <sabras@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/30 16:33:25 by sabras            #+#    #+#             */
-/*   Updated: 2024/09/11 15:12:12 by sabras           ###   ########.fr       */
+/*   Updated: 2024/09/14 09:32:19 by sabras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,7 @@ void	set_cmd_data(t_data *data, t_cmd *cmd, char *content)
 		cmd->name = ft_strdup(content);
 		if (!cmd->name)
 			throw_error(data, "malloc failure");
-		if (!ft_strstr(BUILTINS, cmd->name))
+		if (!is_builtin(data, content))
 			cmd->path = get_cmd_path(data, content);
 		else
 			cmd->path = NULL;
