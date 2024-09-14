@@ -6,7 +6,7 @@
 /*   By: sabras <sabras@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 23:06:19 by sabras            #+#    #+#             */
-/*   Updated: 2024/09/13 20:36:28 by sabras           ###   ########.fr       */
+/*   Updated: 2024/09/14 22:18:41 by sabras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@ void	handle_signals(int in_process)
 	{
 		signal(SIGINT, sigint_handler);
 		signal(SIGQUIT, SIG_IGN);
+		signal(SIGTSTP, SIG_IGN);
 	}
 }
 
