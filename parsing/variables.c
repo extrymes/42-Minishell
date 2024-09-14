@@ -6,7 +6,7 @@
 /*   By: sabras <sabras@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/11 11:11:20 by sabras            #+#    #+#             */
-/*   Updated: 2024/09/13 21:27:53 by sabras           ###   ########.fr       */
+/*   Updated: 2024/09/14 22:20:43 by sabras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,8 +119,11 @@ static char	*get_variable(char *input)
 	int		j;
 
 	i = 0;
-	while (input[i] && check_key(input[i]))
-		i++;
+	if (ft_isdigit(input[i]))
+		i = 1;
+	else
+		while (input[i] && check_key(input[i]))
+			i++;
 	variable = malloc((i + 1) * sizeof(char));
 	if (!variable)
 		return (NULL);
