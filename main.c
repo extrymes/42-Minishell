@@ -6,7 +6,7 @@
 /*   By: sabras <sabras@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/24 09:33:49 by sabras            #+#    #+#             */
-/*   Updated: 2024/09/13 21:49:07 by sabras           ###   ########.fr       */
+/*   Updated: 2024/09/15 09:42:21 by sabras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,14 +29,14 @@ int	main(int ac, char **av, char **env)
 		data.entry->input = readline(data.entry->prompt);
 		if (!data.entry->input)
 			ft_exit(NULL, &data);
-		if (ft_strlen(data.entry->input) > 0)
+		if (g_signal_received)
+			data.exit_code = 128 + g_signal_received;
+		else if (ft_strlen(data.entry->input) > 0)
 		{
 			add_history(data.entry->input);
 			parse_input(&data, data.entry);
 			exec_data(&data);
 		}
-		if (g_signal_received)
-			data.exit_code = 128 + g_signal_received;
 		reset_signal_status();
 		clear_entry(data.entry);
 	}
