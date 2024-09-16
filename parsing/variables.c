@@ -6,7 +6,7 @@
 /*   By: sabras <sabras@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/11 11:11:20 by sabras            #+#    #+#             */
-/*   Updated: 2024/09/14 22:20:43 by sabras           ###   ########.fr       */
+/*   Updated: 2024/09/15 10:01:29 by sabras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,9 @@ char	*handle_variables(t_data *data, char *input, int heredoc)
 		else if (input[p.i] == '$' && input[p.i + 1] == '?'
 			&& (p.quote != '\'' || heredoc))
 			p.parsed = insert_code(data, &p);
+		else if (input[p.i] == '$' && is_quote(input[p.i + 1])
+			&& (!p.quote && !heredoc))
+			p.i++;
 		else if (input[p.i] == '~' && check_tilde(input[p.i + 1])
 			&& (!p.quote && !heredoc))
 			p.parsed = insert_home(data, &p);
