@@ -6,13 +6,13 @@
 /*   By: sabras <sabras@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 11:11:47 by msimao            #+#    #+#             */
-/*   Updated: 2024/09/17 12:22:49 by sabras           ###   ########.fr       */
+/*   Updated: 2024/09/17 13:52:42 by sabras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-int	set_infile(t_file *file, t_pipex *pipex)
+static int	set_infile(t_file *file, t_pipex *pipex)
 {
 	t_file	*tmp;
 
@@ -28,12 +28,11 @@ int	set_infile(t_file *file, t_pipex *pipex)
 		if (dup2(pipex->infile, STDIN_FILENO) < 0)
 			return (perror("dup2"), 1);
 	}
-	if (tmp->redir == FILE_IN)
-		ft_close(pipex->infile);
+	ft_close(pipex->infile);
 	return (0);
 }
 
-int	set_outfile(t_file *file)
+static int	set_outfile(t_file *file)
 {
 	int		outfile;
 	t_file	*tmp;
@@ -55,7 +54,7 @@ int	set_outfile(t_file *file)
 	return (0);
 }
 
-void	distroy_heredoc(t_file *file, t_pipex *pipex)
+static void	destroy_heredoc(t_file *file)
 {
 	t_file	*tmp;
 
@@ -63,10 +62,7 @@ void	distroy_heredoc(t_file *file, t_pipex *pipex)
 	while (tmp)
 	{
 		if (tmp->redir == HERE_DOC)
-		{
 			unlink(tmp->name);
-			ft_close(pipex->infile);
-		}
 		tmp = tmp->next;
 	}
 }
@@ -90,6 +86,6 @@ int	set_file(t_file *file, t_pipex *pipex, t_data *data)
 			return (data->exit_code = 1, 0);
 		tmp = tmp->next;
 	}
-	distroy_heredoc(file, pipex);
+	destroy_heredoc(file);
 	return (1);
 }
