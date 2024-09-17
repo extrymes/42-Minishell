@@ -6,7 +6,7 @@
 /*   By: sabras <sabras@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/26 09:58:23 by sabras            #+#    #+#             */
-/*   Updated: 2024/09/13 21:52:07 by sabras           ###   ########.fr       */
+/*   Updated: 2024/09/17 10:55:46 by sabras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,11 @@ t_data	init_data(char **env)
 	if (!data.pwd)
 		data.pwd = alloc_str(&data, "");
 	data.stdin_fd = dup(STDIN_FILENO);
+	if (data.stdin_fd < 0)
+		throw_error(&data, "dup failure");
 	data.stdout_fd = dup(STDOUT_FILENO);
+	if (data.stdout_fd < 0)
+		throw_error(&data, "dup failure");
 	data.exit_code = 0;
 	data.entry = NULL;
 	return (data);
