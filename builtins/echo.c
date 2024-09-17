@@ -6,7 +6,7 @@
 /*   By: sabras <sabras@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/06 15:09:29 by sabras            #+#    #+#             */
-/*   Updated: 2024/09/14 10:57:14 by sabras           ###   ########.fr       */
+/*   Updated: 2024/09/17 15:50:33 by sabras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,15 +17,16 @@ static int	is_flag(char *str)
 	int	i;
 
 	i = 0;
-	if (str[i] != '-')
-		return (0);
-	i++;
-	while (str[i])
+	if (str[i++] == '-')
 	{
-		if (str[i++] != 'n')
+		if (!str[i])
 			return (0);
+		while (str[i] && str[i] == 'n')
+			i++;
+		if (!str[i])
+			return (1);
 	}
-	return (1);
+	return (0);
 }
 
 void	ft_echo(t_data *data, t_cmd *cmd)

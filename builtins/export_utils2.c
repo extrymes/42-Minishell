@@ -3,14 +3,32 @@
 /*                                                        :::      ::::::::   */
 /*   export_utils2.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: msimao <msimao@student.42.fr>              +#+  +:+       +#+        */
+/*   By: sabras <sabras@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/16 08:38:40 by msimao            #+#    #+#             */
-/*   Updated: 2024/09/16 08:39:36 by msimao           ###   ########.fr       */
+/*   Updated: 2024/09/17 16:09:54 by sabras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
+
+int	is_join(char *str)
+{
+	int	i;
+
+	i = 0;
+	while (str[i])
+	{
+		if (str[i] == '=')
+		{
+			if (i > 0 && str[i - 1] == '+')
+				return (1);
+			return (0);
+		}
+		i++;
+	}
+	return (0);
+}
 
 char	**sort_env(t_data *data)
 {

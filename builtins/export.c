@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: msimao <msimao@student.42.fr>              +#+  +:+       +#+        */
+/*   By: sabras <sabras@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/29 15:09:32 by msimao            #+#    #+#             */
-/*   Updated: 2024/09/16 10:06:03 by msimao           ###   ########.fr       */
+/*   Updated: 2024/09/17 15:50:11 by sabras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,7 +116,7 @@ void	ft_export(t_cmd *cmd, t_data *data)
 		}
 		else
 		{
-			if (ft_strchr(tmp->data, '+'))
+			if (is_join(tmp->data))
 				more_in_var(tmp, data);
 			else if (is_var_exists(data->env, tmp->data) == 0)
 				add_var(tmp->data, data);
