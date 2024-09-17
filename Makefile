@@ -7,7 +7,7 @@ EXEC_FILES = pipex.c pipex_utils.c file_handler.c free_exec.c
 EXEC_SRCS = $(addprefix $(EXEC_DIR)/,$(EXEC_FILES))
 
 BUILT_DIR = builtins
-BUILT_FILES = builtins.c pwd.c echo.c cd.c env.c exit.c unset.c export.c export_utils.c
+BUILT_FILES = builtins.c pwd.c echo.c cd.c cd_utils.c env.c exit.c unset.c export.c export_utils.c export_utils2.c
 BUILT_SRCS = $(addprefix $(BUILT_DIR)/,$(BUILT_FILES))
 
 PARS_DIR = parsing
