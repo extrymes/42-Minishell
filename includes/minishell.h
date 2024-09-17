@@ -6,7 +6,7 @@
 /*   By: sabras <sabras@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/24 09:33:57 by sabras            #+#    #+#             */
-/*   Updated: 2024/09/13 21:46:41 by sabras           ###   ########.fr       */
+/*   Updated: 2024/09/17 11:50:19 by sabras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -136,6 +136,7 @@ char	*handle_variables(t_data *data, char *input, int heredoc);
 char	*get_cmd_name(t_data *data, char *path);
 char	*get_cmd_path(t_data *data, char *name);
 int		check_command(t_data *data, char *content, char **err);
+int		is_builtin(t_data *data, char *content);
 
 // prompt.c
 char	*create_prompt(t_data *data);
@@ -164,12 +165,13 @@ void	error_exec(t_data *data, char *str);
 void	ft_close(int fd);
 void	reset_std(t_data *data);
 void	stop_process(t_data *data, t_pipex *pipex);
+void	clear_fd(int fd1, int fd2);
 
 // builtins
 void	builtins(t_cmd *cmd, t_data *data, int in_fork);
 void	ft_echo(t_data *data, t_cmd *cmd);
 void	ft_cd(t_cmd *cmd, t_data *data);
-void	ft_env(t_data *data);
+void	ft_env(t_data *data, t_cmd *cmd);
 void	ft_pwd(t_data *data);
 void	ft_exit(t_cmd *cmd, t_data *data);
 
@@ -179,6 +181,8 @@ char	*copy_to(char *env, char c, char start);
 int		is_var_exists(char **env, char *str);
 char	**copy_tab(t_data *data);
 int		check_arg(char *str);
+void	set_var(t_data *data, char *path);
+char	**sort_env(t_data *data);
 
 void	*ft_unset(t_cmd *cmd, t_data *data);
 
