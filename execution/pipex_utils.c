@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipex_utils.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sabras <sabras@student.42.fr>              +#+  +:+       +#+        */
+/*   By: msimao <msimao@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/29 14:37:15 by msimao            #+#    #+#             */
-/*   Updated: 2024/09/13 14:30:29 by sabras           ###   ########.fr       */
+/*   Updated: 2024/09/16 15:34:32 by msimao           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,10 @@
 
 void	reset_std(t_data *data)
 {
-	dup2(data->stdout_fd, STDOUT_FILENO);
-	dup2(data->stdin_fd, STDIN_FILENO);
+	if (dup2(data->stdout_fd, STDOUT_FILENO) < 0)
+		return (perror("dup2"), error_exec(data, NULL));
+	if (dup2(data->stdin_fd, STDIN_FILENO) < 0)
+		return (perror("dup2"), error_exec(data, NULL));
 }
 
 void	stop_process(t_data *data, t_pipex *pipex)

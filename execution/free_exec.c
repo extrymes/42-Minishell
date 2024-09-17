@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   free_exec.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sabras <sabras@student.42.fr>              +#+  +:+       +#+        */
+/*   By: msimao <msimao@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/29 11:08:34 by msimao            #+#    #+#             */
-/*   Updated: 2024/09/11 14:59:15 by sabras           ###   ########.fr       */
+/*   Updated: 2024/09/16 15:06:38 by msimao           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,17 +18,11 @@ void	ft_close(int fd)
 		close(fd);
 }
 
-// void	clear_fd(t_file *file)
-// {
-// 	t_file	*tmp;
-
-// 	tmp = file;
-// 	while (tmp)
-// 	{
-// 		ft_close(tmp->name);
-// 		tmp = tmp->next;
-// 	}
-// }
+void	clear_fd(int fd1, int fd2)
+{
+	ft_close(fd1);
+	ft_close(fd2);
+}
 
 void	error_exec(t_data *data, char *str)
 {

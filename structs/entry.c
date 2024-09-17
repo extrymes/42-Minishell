@@ -6,7 +6,7 @@
 /*   By: sabras <sabras@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/24 13:36:11 by sabras            #+#    #+#             */
-/*   Updated: 2024/09/10 13:08:15 by sabras           ###   ########.fr       */
+/*   Updated: 2024/09/17 11:23:53 by sabras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@ t_entry	*init_entry(t_data *data)
 {
 	t_entry	*entry;
 
+	data->entry = NULL;
 	entry = malloc(sizeof(t_entry));
 	if (!entry)
 		throw_error(data, "malloc failure");
@@ -29,6 +30,8 @@ t_entry	*init_entry(t_data *data)
 
 void	clear_entry(t_entry *entry)
 {
+	if (!entry)
+		return ;
 	if (entry->prompt)
 	{
 		free(entry->prompt);

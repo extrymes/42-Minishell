@@ -6,7 +6,7 @@
 /*   By: sabras <sabras@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/26 09:58:23 by sabras            #+#    #+#             */
-/*   Updated: 2024/09/17 10:55:46 by sabras           ###   ########.fr       */
+/*   Updated: 2024/09/17 11:45:27 by sabras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,11 @@ t_data	init_data(char **env)
 {
 	t_data	data;
 
+	data.user = NULL;
+	data.home = NULL;
+	data.pwd = NULL;
+	data.env = NULL;
+	data.entry = NULL;
 	read_env(&data, env);
 	data.user = alloc_str(&data, ft_getenv("USER", data.env));
 	data.home = alloc_str(&data, ft_getenv("HOME", data.env));
@@ -29,7 +34,6 @@ t_data	init_data(char **env)
 	if (data.stdout_fd < 0)
 		throw_error(&data, "dup failure");
 	data.exit_code = 0;
-	data.entry = NULL;
 	return (data);
 }
 

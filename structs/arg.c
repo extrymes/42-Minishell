@@ -6,7 +6,7 @@
 /*   By: sabras <sabras@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/05 19:39:21 by sabras            #+#    #+#             */
-/*   Updated: 2024/09/10 13:07:52 by sabras           ###   ########.fr       */
+/*   Updated: 2024/09/17 11:09:52 by sabras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ t_arg	*init_arg(t_data *data, char *content)
 	arg = malloc(sizeof(t_arg));
 	if (!arg)
 		throw_error(data, "malloc failure");
-	arg->data = ft_strdup(content);
+	arg->data = alloc_str(data, content);
 	arg->next = NULL;
 	return (arg);
 }

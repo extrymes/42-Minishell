@@ -6,11 +6,24 @@
 /*   By: sabras <sabras@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/29 15:08:55 by msimao            #+#    #+#             */
-/*   Updated: 2024/09/12 15:15:01 by sabras           ###   ########.fr       */
+/*   Updated: 2024/09/17 11:34:55 by sabras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
+
+static int	compare(char *s1, char *s2)
+{
+	char	*str;
+
+	if (!ft_strchr(s2, '='))
+		str = ft_strjoin(s2, "=");
+	else
+		str = ft_strdup(s2);
+	if (ft_strncmp(s1, str, ft_strlen(s1)) == 0)
+		return (free(str), 1);
+	return (free(str), 0);
+}
 
 static char	**new_env(t_arg *arg, char **env)
 {
@@ -21,14 +34,14 @@ static char	**new_env(t_arg *arg, char **env)
 	i = 0;
 	while (env[i])
 		i++;
-	envp = malloc(sizeof(char *) * i);
+	envp = malloc(sizeof(char *) * (i + 1));
 	if (!envp)
 		return (NULL);
 	i = -1;
 	j = -1;
 	while (env[++i])
 	{
-		if (ft_strncmp(arg->data, env[i], (ft_strlen(arg->data) - 1)) == 0)
+		if (compare(arg->data, env[i]) == 1)
 			continue ;
 		envp[++j] = ft_strdup(env[i]);
 		if (!envp[j])
@@ -48,6 +61,8 @@ void	*ft_unset(t_cmd *cmd, t_data *data)
 	while (tmp)
 	{
 		tmp->data = strjoin_free(tmp->data, "=", 0);
+		if (!tmp->data)
+			return (NULL);
 		if (is_var_exists(data->env, tmp->data) == 0)
 		{
 			tmp = tmp->next;

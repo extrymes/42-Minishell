@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipex.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sabras <sabras@student.42.fr>              +#+  +:+       +#+        */
+/*   By: msimao <msimao@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/29 14:36:25 by msimao            #+#    #+#             */
-/*   Updated: 2024/09/13 19:52:25 by sabras           ###   ########.fr       */
+/*   Updated: 2024/09/16 15:29:33 by msimao           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,21 +49,21 @@ int	child(t_data *data, t_pipex *pipex, int i)
 		return (perror(NULL), error_exec(data, NULL), 0);
 	if (pipex->pid[i] == 0)
 	{
-		dup2(pipex->tube[1], STDOUT_FILENO);
+		if (dup2(pipex->tube[1], STDOUT_FILENO) < 0)
+			return (error_exec(data, NULL), 0);
 		cmd = get_cmd_by_id(data->entry->cmd_lst, i);
 		free(pipex->pid);
-		close(pipex->tube[0]);
-		close(pipex->tube[1]);
-		close(data->stdout_fd);
-		close(data->stdin_fd);
+		clear_fd(pipex->tube[0], pipex->tube[1]);
+		clear_fd(data->stdout_fd, data->stdin_fd);
 		if (!set_file(cmd->file_lst, pipex, data) || cmd->err != NULL)
 			error_exec(data, cmd->err);
 		if (cmd->path == NULL)
 			builtins(cmd, data, 1);
 		ft_exec(cmd, data);
 	}
-	dup2(pipex->tube[0], STDIN_FILENO);
-	return (close(pipex->tube[1]), close(pipex->tube[0]), 1);
+	if (dup2(pipex->tube[0], STDIN_FILENO) < 0)
+		return (perror("dup2"), error_exec(data, NULL), 0);
+	return (clear_fd(pipex->tube[0], pipex->tube[1]), 1);
 }
 
 int	parent(t_data *data, t_pipex *pipex, int i)
@@ -102,6 +102,8 @@ void	multi_cmd(t_data *data, t_pipex *pipex)
 	if (!parent(data, pipex, i))
 		return (free(pipex->pid), error_exec(data, "malloc failure"));
 	stop_process(data, pipex);
+	ft_close(pipex->tube[0]);
+	ft_close(pipex->tube[1]);
 }
 
 void	exec_data(t_data *data)
@@ -117,11 +119,7 @@ void	exec_data(t_data *data)
 	if (data->entry->cmd_count == 1)
 		one_cmd(data, &pipex);
 	else
-	{
 		multi_cmd(data, &pipex);
-		ft_close(pipex.tube[0]);
-		ft_close(pipex.tube[1]);
-	}
 	reset_std(data);
 	handle_signals(0);
 	if (pipex.pid)

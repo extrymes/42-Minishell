@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   file_handler.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sabras <sabras@student.42.fr>              +#+  +:+       +#+        */
+/*   By: msimao <msimao@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 11:11:47 by msimao            #+#    #+#             */
-/*   Updated: 2024/09/12 14:34:37 by sabras           ###   ########.fr       */
+/*   Updated: 2024/09/16 15:18:23 by msimao           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,10 @@ int	set_infile(t_file *file, t_pipex *pipex)
 	if (pipex->infile < 0)
 		return (cmd_error(tmp->name, NULL, "Permission denied"), 1);
 	if (pipex->infile != 0)
-		dup2(pipex->infile, STDIN_FILENO);
+	{
+		if (dup2(pipex->infile, STDIN_FILENO) < 0)
+			return (perror("dup2"), 1);
+	}
 	if (tmp->redir == FILE_IN)
 		ft_close(pipex->infile);
 	return (0);
@@ -45,7 +48,8 @@ int	set_outfile(t_file *file)
 		return (cmd_error(tmp->name, NULL, "Permission denied"), 1);
 	if (outfile != 0)
 	{
-		dup2(outfile, STDOUT_FILENO);
+		if (dup2(outfile, STDIN_FILENO) < 0)
+			return (perror("dup2"), 1);
 		ft_close(outfile);
 	}
 	return (0);
