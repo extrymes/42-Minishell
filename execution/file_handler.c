@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   file_handler.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: msimao <msimao@student.42.fr>              +#+  +:+       +#+        */
+/*   By: sabras <sabras@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 11:11:47 by msimao            #+#    #+#             */
-/*   Updated: 2024/09/16 15:18:23 by msimao           ###   ########.fr       */
+/*   Updated: 2024/09/17 12:22:49 by sabras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ int	set_outfile(t_file *file)
 		return (cmd_error(tmp->name, NULL, "Permission denied"), 1);
 	if (outfile != 0)
 	{
-		if (dup2(outfile, STDIN_FILENO) < 0)
+		if (dup2(outfile, STDOUT_FILENO) < 0)
 			return (perror("dup2"), 1);
 		ft_close(outfile);
 	}
