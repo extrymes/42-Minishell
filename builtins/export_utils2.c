@@ -1,49 +1,42 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   env.c                                              :+:      :+:    :+:   */
+/*   export_utils2.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: msimao <msimao@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/08/29 14:52:41 by msimao            #+#    #+#             */
-/*   Updated: 2024/09/16 09:55:58 by msimao           ###   ########.fr       */
+/*   Created: 2024/09/16 08:38:40 by msimao            #+#    #+#             */
+/*   Updated: 2024/09/16 08:39:36 by msimao           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-static int	is_key(char *str)
+char	**sort_env(t_data *data)
 {
-	int	i;
+	int		i;
+	int		j;
+	char	*tmp;
+	char	**envp;
 
+	envp = copy_tab(data);
+	if (!envp)
+		return (NULL);
 	i = 0;
-	while (str[i])
-	{
-		if (str[i] == '=')
-			return (1);
+	while (envp[i])
 		i++;
-	}
-	return (0);
-}
-
-void	ft_env(t_data *data, t_cmd *cmd)
-{
-	int	i;
-
-	i = 0;
-	(void)cmd;
-	if (cmd->arg_count != 0)
-		return (cmd_error(cmd->name, NULL, "too many arguments"));
-	while (data->env[i])
+	j = 0;
+	while (j + 1 < i)
 	{
-		if (is_key(data->env[i]))
+		if (ft_strcmp(envp[j], envp[j + 1]) > 0)
 		{
-			ft_putstr_fd(data->env[i], STDOUT_FILENO);
-			ft_putstr_fd("\n", STDOUT_FILENO);
-			i++;
+			tmp = envp[j];
+			envp[j] = envp[j + 1];
+			envp[j + 1] = tmp;
+			j = 0;
 		}
 		else
-			i++;
+			j++;
 	}
-	data->exit_code = 0;
+	return (envp);
 }

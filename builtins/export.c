@@ -3,50 +3,21 @@
 /*                                                        :::      ::::::::   */
 /*   export.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sabras <sabras@student.42.fr>              +#+  +:+       +#+        */
+/*   By: msimao <msimao@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/29 15:09:32 by msimao            #+#    #+#             */
-/*   Updated: 2024/09/14 11:28:44 by sabras           ###   ########.fr       */
+/*   Updated: 2024/09/16 10:06:03 by msimao           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-static void	add_var(t_arg *arg, t_data *data);
-static void	modif_var(t_arg *arg, t_data *data);
+static void	add_var(char *str, t_data *data);
+static void	modif_var(char *str, t_data *data);
 static void	print_env(t_data *data);
-static char	**sort_env(t_data *data);
+static void	more_in_var(t_arg *arg, t_data *data);
 
-static char	**sort_env(t_data *data)
-{
-	int		i;
-	int		j;
-	char	*tmp;
-	char	**envp;
-
-	envp = copy_tab(data);
-	if (!envp)
-		return (NULL);
-	i = 0;
-	while (envp[i])
-		i++;
-	j = 0;
-	while (j + 1 < i)
-	{
-		if (ft_strcmp(envp[j], envp[j + 1]) > 0)
-		{
-			tmp = envp[j];
-			envp[j] = envp[j + 1];
-			envp[j + 1] = tmp;
-			j = 0;
-		}
-		else
-			j++;
-	}
-	return (envp);
-}
-
-static void	add_var(t_arg *arg, t_data *data)
+static void	add_var(char *str, t_data *data)
 {
 	int	i;
 
@@ -57,23 +28,47 @@ static void	add_var(t_arg *arg, t_data *data)
 	sizeof(char *) * (i + 2));
 	if (!data->env)
 		return ;
-	data->env[i] = ft_strdup(arg->data);
+	data->env[i] = ft_strdup(str);
 	if (!data->env[i])
 		return ;
 	data->env[i + 1] = NULL;
 }
 
-static void	modif_var(t_arg *arg, t_data *data)
+static void	modif_var(char *str, t_data *data)
 {
 	int	i;
 
-	if (!ft_strchr(arg->data, '='))
+	if (!ft_strchr(str, '='))
 		return ;
-	i = is_var_exists(data->env, arg->data);
+	i = is_var_exists(data->env, str);
 	free(data->env[i]);
-	data->env[i] = ft_strdup(arg->data);
+	data->env[i] = ft_strdup(str);
 	if (!data->env[i])
 		return ;
+}
+
+static void	more_in_var(t_arg *arg, t_data *data)
+{
+	char	*str;
+	int		i;
+
+	str = copy_to(arg->data, '+', '\0');
+	str = strjoin_free(str, "=", 0);
+	str = strjoin_free(str, copy_to(arg->data, '\0', '='), 2);
+	if (is_var_exists(data->env, str) == 0)
+		add_var(str, data);
+	else
+	{
+		i = is_var_exists(data->env, str);
+		if (!ft_strchr(data->env[i], '='))
+			modif_var(str, data);
+		else
+		{
+			data->env[i] = strjoin_free(data->env[i], \
+			copy_to(arg->data, '\0', '='), 2);
+		}
+	}
+	free(str);
 }
 
 static void	print_env(t_data *data)
@@ -121,10 +116,12 @@ void	ft_export(t_cmd *cmd, t_data *data)
 		}
 		else
 		{
-			if (is_var_exists(data->env, tmp->data) == 0)
-				add_var(tmp, data);
+			if (ft_strchr(tmp->data, '+'))
+				more_in_var(tmp, data);
+			else if (is_var_exists(data->env, tmp->data) == 0)
+				add_var(tmp->data, data);
 			else
-				modif_var(tmp, data);
+				modif_var(tmp->data, data);
 		}
 		tmp = tmp->next;
 	}

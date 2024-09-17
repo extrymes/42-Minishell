@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export_utils.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sabras <sabras@student.42.fr>              +#+  +:+       +#+        */
+/*   By: msimao <msimao@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/03 16:42:42 by msimao            #+#    #+#             */
-/*   Updated: 2024/09/14 11:29:41 by sabras           ###   ########.fr       */
+/*   Updated: 2024/09/16 08:29:48 by msimao           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,13 +59,17 @@ char	**copy_tab(t_data *data)
 int	check_arg(char *str)
 {
 	int	i;
+	int	j;
 
 	i = 0;
+	j = 0;
 	if (ft_isdigit(str[i]))
 		return (0);
+	while (str[j] && str[j] != '=')
+		j++;
 	while (str[i] && str[i] != '=')
 	{
-		if (!check_key(str[i]))
+		if (!check_key(str[i]) && str[j - 1] != '+')
 			return (0);
 		i++;
 	}
