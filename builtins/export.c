@@ -6,7 +6,7 @@
 /*   By: sabras <sabras@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/29 15:09:32 by msimao            #+#    #+#             */
-/*   Updated: 2024/09/17 15:50:11 by sabras           ###   ########.fr       */
+/*   Updated: 2024/09/18 09:14:53 by sabras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ static void	more_in_var(t_arg *arg, t_data *data)
 	str = copy_to(arg->data, '+', '\0');
 	str = strjoin_free(str, "=", 0);
 	str = strjoin_free(str, copy_to(arg->data, '\0', '='), 2);
-	if (is_var_exists(data->env, str) == 0)
+	if (is_var_exists(data->env, str) == -1)
 		add_var(str, data);
 	else
 	{
@@ -118,7 +118,7 @@ void	ft_export(t_cmd *cmd, t_data *data)
 		{
 			if (is_join(tmp->data))
 				more_in_var(tmp, data);
-			else if (is_var_exists(data->env, tmp->data) == 0)
+			else if (is_var_exists(data->env, tmp->data) == -1)
 				add_var(tmp->data, data);
 			else
 				modif_var(tmp->data, data);

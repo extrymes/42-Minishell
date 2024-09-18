@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export_utils.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: msimao <msimao@student.42.fr>              +#+  +:+       +#+        */
+/*   By: sabras <sabras@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/03 16:42:42 by msimao            #+#    #+#             */
-/*   Updated: 2024/09/16 08:29:48 by msimao           ###   ########.fr       */
+/*   Updated: 2024/09/18 09:13:04 by sabras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ int	is_var_exists(char **env, char *str)
 		}
 		i++;
 	}
-	return (0);
+	return (-1);
 }
 
 char	**copy_tab(t_data *data)

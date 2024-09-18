@@ -6,7 +6,7 @@
 /*   By: sabras <sabras@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/29 13:59:47 by msimao            #+#    #+#             */
-/*   Updated: 2024/09/14 15:08:06 by sabras           ###   ########.fr       */
+/*   Updated: 2024/09/18 09:14:53 by sabras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ static void	set_pwd(t_data *data, char *path)
 
 	set_var(data, path);
 	i = is_var_exists(data->env, "PWD=");
-	if (i != 0)
+	if (i != -1)
 	{
 		free(data->env[i]);
 		data->env[i] = ft_strjoin("PWD=", data->pwd);
@@ -67,7 +67,7 @@ static void	set_old(t_data *data)
 	int	i;
 
 	i = is_var_exists(data->env, "OLDPWD=");
-	if (i != 0)
+	if (i != -1)
 	{
 		free(data->env[i]);
 		data->env[i] = ft_strjoin("OLDPWD=", data->pwd);
