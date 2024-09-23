@@ -6,7 +6,7 @@
 /*   By: sabras <sabras@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/29 14:36:25 by msimao            #+#    #+#             */
-/*   Updated: 2024/09/23 10:59:34 by sabras           ###   ########.fr       */
+/*   Updated: 2024/09/23 11:03:37 by sabras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ void	ft_exec(t_cmd *cmd, t_data *data)
 	tab[i + 1] = 0;
 	execve(cmd->path, tab, data->env);
 	perror("execve");
-	exit(EXIT_FAILURE);
+	return (free_split(tab), clear_data(data), exit(EXIT_FAILURE));
 }
 
 int	child(t_data *data, t_pipex *pipex, int i)
