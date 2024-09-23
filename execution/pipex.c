@@ -6,7 +6,7 @@
 /*   By: sabras <sabras@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/29 14:36:25 by msimao            #+#    #+#             */
-/*   Updated: 2024/09/23 11:03:37 by sabras           ###   ########.fr       */
+/*   Updated: 2024/09/23 14:43:54 by sabras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,8 @@ void	ft_exec(t_cmd *cmd, t_data *data)
 	char	**tab;
 
 	i = 0;
+	if (!cmd->name)
+		return (clear_data(data), exit(EXIT_FAILURE));
 	tab = malloc(sizeof(char *) * (cmd->arg_count + 2));
 	if (tab == NULL)
 		error_exec(data, NULL);
