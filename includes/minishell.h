@@ -6,7 +6,7 @@
 /*   By: sabras <sabras@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/24 09:33:57 by sabras            #+#    #+#             */
-/*   Updated: 2024/09/17 15:50:55 by sabras           ###   ########.fr       */
+/*   Updated: 2024/09/23 10:46:14 by sabras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,14 +36,14 @@ typedef struct s_pipex	t_pipex;
 
 struct s_data
 {
-	char	*user;
-	char	*home;
-	char	*pwd;
-	char	**env;
-	int		stdin_fd;
-	int		stdout_fd;
-	int		exit_code;
-	t_entry	*entry;
+	char			*user;
+	char			*home;
+	char			*pwd;
+	char			**env;
+	int				stdin_fd;
+	int				stdout_fd;
+	long long		exit_code;
+	t_entry			*entry;
 };
 
 struct s_entry
