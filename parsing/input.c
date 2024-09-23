@@ -6,7 +6,7 @@
 /*   By: sabras <sabras@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/29 19:56:48 by sabras            #+#    #+#             */
-/*   Updated: 2024/09/18 09:23:42 by sabras           ###   ########.fr       */
+/*   Updated: 2024/09/23 10:44:02 by sabras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,7 +106,8 @@ static int	handle_heredoc(t_data *data, t_token *delimiter, int fd)
 		if (!ft_strcmp(line, delimiter->content))
 			break ;
 		if (g_signal_received)
-			return (close(fd), free(line), 0);
+			return (data->exit_code = 128 + g_signal_received,
+				close(fd), free(line), 0);
 		ft_putstr_fd(line, fd);
 		ft_putstr_fd("\n", fd);
 		free(line);

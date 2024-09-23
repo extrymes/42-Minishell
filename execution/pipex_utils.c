@@ -3,14 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   pipex_utils.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: msimao <msimao@student.42.fr>              +#+  +:+       +#+        */
+/*   By: sabras <sabras@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/29 14:37:15 by msimao            #+#    #+#             */
-/*   Updated: 2024/09/16 15:34:32 by msimao           ###   ########.fr       */
+/*   Updated: 2024/09/23 11:00:47 by sabras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
+
+extern int	g_signal_received;
 
 void	reset_std(t_data *data)
 {
@@ -32,6 +34,8 @@ void	stop_process(t_data *data, t_pipex *pipex)
 			&& WIFEXITED(exit_status))
 			data->exit_code = WEXITSTATUS(exit_status);
 	}
+	if (data->exit_code == 0 && g_signal_received)
+		data->exit_code = 128 + g_signal_received;
 }
 
 void	one_cmd(t_data *data, t_pipex *pipex)
