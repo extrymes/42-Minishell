@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipex.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: msimao <msimao@student.42.fr>              +#+  +:+       +#+        */
+/*   By: sabras <sabras@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/29 14:36:25 by msimao            #+#    #+#             */
-/*   Updated: 2024/09/16 15:29:33 by msimao           ###   ########.fr       */
+/*   Updated: 2024/09/23 10:59:34 by sabras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,6 +116,9 @@ void	exec_data(t_data *data)
 	if (!pipex.pid)
 		return (error_exec(data, "malloc failure"));
 	handle_signals(1);
+	if (data->entry->cmd_lst->name
+		&& !ft_strcmp(data->entry->cmd_lst->name, "minishell"))
+		handle_signals(0);
 	if (data->entry->cmd_count == 1)
 		one_cmd(data, &pipex);
 	else
