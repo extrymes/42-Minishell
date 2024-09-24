@@ -6,7 +6,7 @@
 /*   By: sabras <sabras@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/29 19:56:48 by sabras            #+#    #+#             */
-/*   Updated: 2024/09/23 10:44:02 by sabras           ###   ########.fr       */
+/*   Updated: 2024/09/24 15:36:52 by sabras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@ extern int	g_signal_received;
 static t_cmd	*get_cmd(t_data *data, t_token *token);
 static int		handle_redir(t_data *data, t_cmd *cmd, t_token *token, int *id);
 static int		handle_heredoc(t_data *data, t_token *token, int fd);
+static void		unlink_files(t_cmd *cmd_lst);
 
 void	*parse_input(t_data *data, t_entry *entry)
 {
@@ -40,7 +41,7 @@ void	*parse_input(t_data *data, t_entry *entry)
 		if (token->type == PIPE && ++id)
 			cmd = NULL;
 		if (id == -1)
-			return (entry->cmd_count = 0, NULL);
+			return (unlink_files(entry->cmd_lst), entry->cmd_count = 0, NULL);
 		token = token->next;
 	}
 	return (NULL);
@@ -85,7 +86,7 @@ static int	handle_redir(t_data *data, t_cmd *cmd, t_token *token, int *id)
 		if (fd < 0)
 			return (free(filename), throw_error(data, "open failure"), 0);
 		if (!handle_heredoc(data, token->next, fd))
-			return (free(filename), *id = -1, 0);
+			return (unlink(filename), free(filename), *id = -1, 0);
 	}
 	else
 		filename = alloc_str(data, token->next->content);
@@ -117,4 +118,17 @@ static int	handle_heredoc(t_data *data, t_token *delimiter, int fd)
 	else
 		heredoc_warning(delimiter->content);
 	return (close(fd), 1);
+}
+
+static void	unlink_files(t_cmd *cmd_lst)
+{
+	t_cmd	*tmp;
+
+	tmp = cmd_lst;
+	while (tmp)
+	{
+		if (tmp->file_lst && tmp->file_lst->redir == HERE_DOC)
+			unlink(tmp->file_lst->name);
+		tmp = tmp->next;
+	}
 }
