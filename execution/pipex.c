@@ -6,7 +6,7 @@
 /*   By: sabras <sabras@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/29 14:36:25 by msimao            #+#    #+#             */
-/*   Updated: 2024/09/23 14:43:54 by sabras           ###   ########.fr       */
+/*   Updated: 2024/09/25 16:32:03 by sabras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,8 +44,6 @@ int	child(t_data *data, t_pipex *pipex, int i)
 {
 	t_cmd	*cmd;
 
-	if (pipe(pipex->tube) < 0)
-		return (perror(NULL), error_exec(data, NULL), 0);
 	pipex->pid[i] = fork();
 	if (pipex->pid[i] < 0)
 		return (perror(NULL), error_exec(data, NULL), 0);
@@ -53,6 +51,8 @@ int	child(t_data *data, t_pipex *pipex, int i)
 	{
 		if (dup2(pipex->tube[1], STDOUT_FILENO) < 0)
 			return (error_exec(data, NULL), 0);
+		if (i == data->entry->cmd_count - 1)
+			dup2(data->stdout_fd, STDOUT_FILENO);
 		cmd = get_cmd_by_id(data->entry->cmd_lst, i);
 		free(pipex->pid);
 		clear_fd(pipex->tube[0], pipex->tube[1]);
@@ -68,41 +68,19 @@ int	child(t_data *data, t_pipex *pipex, int i)
 	return (clear_fd(pipex->tube[0], pipex->tube[1]), 1);
 }
 
-int	parent(t_data *data, t_pipex *pipex, int i)
-{
-	t_cmd	*cmd;
-
-	pipex->pid[i] = fork();
-	if (pipex->pid[i] < 0)
-		return (perror(NULL), error_exec(data, NULL), 0);
-	if (pipex->pid[i] == 0)
-	{
-		free(pipex->pid);
-		close(data->stdout_fd);
-		close(data->stdin_fd);
-		cmd = get_cmd_by_id(data->entry->cmd_lst, i);
-		if (!set_file(cmd->file_lst, pipex, data) || cmd->err != NULL)
-			error_exec(data, cmd->err);
-		if (cmd->path == NULL)
-			builtins(cmd, data, 1);
-		ft_exec(cmd, data);
-	}
-	return (1);
-}
-
 void	multi_cmd(t_data *data, t_pipex *pipex)
 {
 	int		i;
 
 	i = 0;
-	while (i < data->entry->cmd_count - 1)
+	while (i < data->entry->cmd_count)
 	{
+		if (pipe(pipex->tube) < 0)
+			return (perror(NULL), error_exec(data, NULL));
 		if (!child(data, pipex, i))
 			return (free(pipex->pid), error_exec(data, "malloc failure"));
 		i++;
 	}
-	if (!parent(data, pipex, i))
-		return (free(pipex->pid), error_exec(data, "malloc failure"));
 	stop_process(data, pipex);
 	ft_close(pipex->tube[0]);
 	ft_close(pipex->tube[1]);

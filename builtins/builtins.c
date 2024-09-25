@@ -6,7 +6,7 @@
 /*   By: sabras <sabras@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/28 11:23:54 by msimao            #+#    #+#             */
-/*   Updated: 2024/09/14 11:02:54 by sabras           ###   ########.fr       */
+/*   Updated: 2024/09/25 17:16:39 by sabras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,11 @@
 void	builtins(t_cmd *cmd, t_data *data, int in_fork)
 {
 	if (cmd->name == NULL)
+	{
+		if (in_fork == 1)
+			return (clear_data(data), exit(EXIT_SUCCESS));
 		return ;
+	}
 	else if (ft_strncmp(cmd->name, "echo", 4) == 0)
 		ft_echo(data, cmd);
 	else if (ft_strncmp(cmd->name, "pwd", 3) == 0)
@@ -31,8 +35,5 @@ void	builtins(t_cmd *cmd, t_data *data, int in_fork)
 	else if (ft_strncmp(cmd->name, "unset", 5) == 0)
 		ft_unset(cmd, data);
 	if (in_fork == 1)
-	{
-		clear_data(data);
-		exit(EXIT_SUCCESS);
-	}
+		return (clear_data(data), exit(EXIT_SUCCESS));
 }
