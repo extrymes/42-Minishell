@@ -6,7 +6,7 @@
 /*   By: sabras <sabras@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/29 13:59:47 by msimao            #+#    #+#             */
-/*   Updated: 2024/09/18 09:14:53 by sabras           ###   ########.fr       */
+/*   Updated: 2024/09/26 08:33:59 by sabras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,7 @@ static void	set_pwd(t_data *data, char *path)
 	}
 	else
 	{
+		i = 0;
 		while (data->env[i])
 			i++;
 		data->env = ft_realloc2(data->env, sizeof(char *) * i, \
@@ -76,6 +77,7 @@ static void	set_old(t_data *data)
 	}
 	else
 	{
+		i = 0;
 		while (data->env[i])
 			i++;
 		data->env = ft_realloc2(data->env, sizeof(char *) * i, \
