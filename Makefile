@@ -39,12 +39,23 @@ MAGENTA = \033[35m
 CYAN = \033[36m
 RESET = \033[0m
 
+UNAME_S = $(shell uname -s)
+ifeq ($(UNAME_S), Linux)
+    RLFLAGS = -l readline
+else ifeq ($(UNAME_S), Darwin)
+    READLINE_DIR = $(shell brew --prefix readline)
+    INCLUDES += -I $(READLINE_DIR)/include
+    RLFLAGS = -L $(READLINE_DIR)/lib -lreadline
+else
+    $(error Operating system not supported)
+endif
+
+all: $(LIBFT) $(NAME)
+
 $(BIN_DIR)/%.o: %.c
 	@mkdir -p $(dir $@)
 	@echo "$(CYAN)Compiling $<...$(RESET)"
 	@$(CC) $(INCLUDES) -c $< -o $@
-
-all: $(LIBFT) $(NAME)
 
 $(LIBFT):
 	@echo "$(YELLOW)Building libft...$(RESET)"
@@ -53,7 +64,7 @@ $(LIBFT):
 
 $(NAME): $(OBJS) $(LIBFT)
 	@echo "\n$(YELLOW)Linking objects...$(RESET)"
-	@$(CC) -lreadline -o $(NAME) $^
+	@$(CC) $(RLFLAGS) -o $(NAME) $^
 	@echo "$(BLUE)Progress: 100%$(RESET)"
 	@echo "$(GREEN)Compilation complete!$(RESET)"
 	@echo "$(BLUE)\n\
