@@ -1,3 +1,7 @@
+NAME = libft.a
+
+BIN_DIR = bin
+
 SRCS = ft_isalpha.c ft_isdigit.c ft_isalnum.c \
 	ft_isascii.c ft_isprint.c ft_isspace.c ft_strlen.c \
 	ft_memset.c ft_bzero.c ft_memcpy.c \
@@ -14,12 +18,10 @@ SRCS = ft_isalpha.c ft_isdigit.c ft_isalnum.c \
 	ft_lstlast.c ft_lstadd_back.c ft_lstdelone.c \
 	ft_lstclear.c ft_lstiter.c ft_lstmap.c
 
-OBJS = $(SRCS:.c=.o)
+OBJS = $(SRCS:%.c=$(BIN_DIR)/%.o)
 
-NAME = libft.a
-
-CFLAGS = -Wall -Wextra -Werror
-CC = cc $(CFLAGS) -g
+CFLAGS = -Wall -Wextra -Werror  -g
+CC = cc $(CFLAGS)
 
 BOLD = \033[1m
 GRAY = \033[30m
@@ -31,17 +33,17 @@ MAGENTA = \033[35m
 CYAN = \033[36m
 RESET = \033[0m
 
-%.o: %.c
-	@$(CC) $(CFLAGS) -c $< -o $@
+$(BIN_DIR)/%.o: %.c
+	@mkdir -p $(dir $@)
+	@$(CC) -c $< -o $@
 
 all: $(NAME)
 
 $(NAME): $(OBJS)
 	@ar rcs $(NAME) $(OBJS)
-	@echo "$(GREEN)Library $(NAME) successfully built!$(RESET)"
 
 clean:
-	@rm -f $(OBJS)
+	@rm -rf $(BIN_DIR)
 
 fclean: clean
 	@rm -f $(NAME)
