@@ -45,7 +45,7 @@ ifeq ($(UNAME_S), Linux)
 else ifeq ($(UNAME_S), Darwin)
     READLINE_DIR = $(shell brew --prefix readline)
     INCLUDES += -I $(READLINE_DIR)/include
-    RLFLAGS = -L $(READLINE_DIR)/lib -lreadline
+    RLFLAGS = -L $(READLINE_DIR)/lib -l readline
 else
     $(error Operating system not supported)
 endif
